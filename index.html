@@ -738,6 +738,76 @@ html.no-gsap .work-info{ opacity:1; }
 .field .err{ font-size:.78rem; color:#FF8FB8; min-height:0; }
 .field-row{ display:grid; gap:18px; grid-template-columns:1fr 1fr; }
 @media (max-width:560px){ .field-row{ grid-template-columns:1fr; } }
+/* [hidden] her şeyi yenmeli: .form'un display:grid'i onu ezmesin diye. */
+[hidden]{ display:none !important; }
+
+/* --------------------------------------------------------------------------
+   WHATSAPP KARTI — formun yerine geçen yönlendirme paneli
+   -------------------------------------------------------------------------- */
+.wa-card{
+  position:relative; overflow:hidden; text-align:center;
+  padding:clamp(34px,4vw,52px) clamp(24px,3.2vw,44px);
+  border-radius:var(--r-xl);
+  background:linear-gradient(165deg, rgba(255,255,255,.085), rgba(255,255,255,.025));
+  border:1px solid var(--line); backdrop-filter:blur(16px);
+  display:flex; flex-direction:column; align-items:center;
+}
+/* Arkadaki yumuşak ışık — kartı sayfanın tünel diline bağlar */
+.wa-glow{
+  position:absolute; inset:-40% -20% auto -20%; height:80%;
+  background:radial-gradient(50% 60% at 50% 30%, rgba(var(--violet-rgb),.42), transparent 70%);
+  filter:blur(14px); pointer-events:none;
+}
+.wa-card > *:not(.wa-glow){ position:relative; z-index:1; }
+
+.wa-badge{
+  position:relative; display:grid; place-items:center; flex:none;
+  width:74px; height:74px; border-radius:50%;
+  background:var(--grad);
+  box-shadow:0 16px 40px -12px rgba(var(--violet-rgb),.95);
+  margin-bottom:26px;
+}
+.wa-badge svg{ width:36px; height:36px; fill:#fff; position:relative; z-index:1; }
+/* Dışa doğru açılan halka: "buradan ulaş" vurgusu */
+.wa-pulse{
+  position:absolute; inset:0; border-radius:50%;
+  border:2px solid rgba(var(--cyan-rgb),.6);
+  animation:waPulse 2.6s var(--ease-out) infinite;
+}
+@keyframes waPulse{
+  0%   { transform:scale(1);    opacity:.85; }
+  70%  { transform:scale(1.75); opacity:0; }
+  100% { transform:scale(1.75); opacity:0; }
+}
+
+.wa-eyebrow{
+  font-family:'Space Grotesk',sans-serif; font-size:.74rem; font-weight:500;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--muted);
+}
+.wa-title{
+  font-size:clamp(1.5rem,2.5vw,2.05rem);
+  margin:14px 0 14px; max-width:16ch;
+}
+.wa-text{
+  color:var(--ink-2); font-size:.96rem; max-width:38ch; margin-bottom:30px;
+}
+
+/* Numara butonu — sayfanın ana butonundan biraz daha iri */
+.wa-btn{
+  padding:17px 34px; font-size:1.06rem; letter-spacing:.01em;
+}
+.wa-btn svg{ width:21px; height:21px; fill:#fff; flex:none; }
+
+.wa-perks{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:10px 22px;
+  margin-top:26px; font-size:.83rem; color:var(--muted);
+}
+.wa-perks li{ display:flex; align-items:center; gap:8px; }
+.wa-perks li::before{
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--grad); flex:none;
+}
+
 .form-note{ font-size:.8rem; color:var(--muted); }
 .form-status{
   margin:0; font-size:.9rem; padding:0; border-radius:var(--r-sm);
@@ -1196,9 +1266,47 @@ a.is-pending{ cursor:default; }
         </div>
       </div>
 
-      <!-- Form: istemci tarafı doğrulama var; gönderim ucu için JS'teki
-           CONFIG.formEndpoint değerini doldurman yeterli. -->
-      <form class="form" id="contactForm" novalidate data-reveal>
+      <!-- ==================================================================
+           İLETİŞİM PANELİ — iki seçenek de kodda duruyor, hangisinin
+           görüneceğini JS'teki CONFIG.contactMode belirliyor:
+             'whatsapp' → aşağıdaki WhatsApp kartı  (şu an aktif)
+             'form'     → iletişim formu             (e-posta hazır olunca)
+           Geçiş için tek yapman gereken CONFIG.contactMode değerini
+           'form' yapmak; başka hiçbir şeye dokunmana gerek yok.
+           ================================================================== -->
+
+      <!-- SEÇENEK 1: WhatsApp yönlendirmesi -->
+      <div class="wa-card" data-contact-panel="whatsapp" data-reveal>
+        <div class="wa-glow" aria-hidden="true"></div>
+
+        <span class="wa-badge" aria-hidden="true">
+          <span class="wa-pulse"></span>
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 2a8 8 0 1 1-4.1 14.9l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0 1 12 4m-3.3 4.3c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.2.1-1.3l-.6-.3s-1.3-.6-1.5-.7c-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4z"/></svg>
+        </span>
+
+        <span class="wa-eyebrow">Hızlı İletişim</span>
+        <h3 class="wa-title">Lütfen <span class="grad-text">WhatsApp</span> üzerinden ulaşınız</h3>
+        <p class="wa-text">
+          Projeni birkaç cümleyle anlat, aklındaki her şeyi orada konuşalım.
+          Genellikle aynı gün içinde dönüş yapıyoruz.
+        </p>
+
+        <a class="btn btn-primary wa-btn" data-wa href="https://wa.me/905466204264"
+           target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 2a8 8 0 1 1-4.1 14.9l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0 1 12 4m-3.3 4.3c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.2.1-1.3l-.6-.3s-1.3-.6-1.5-.7c-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4z"/></svg>
+          <span data-phone>+90 546 620 42 64</span>
+        </a>
+
+        <ul class="wa-perks">
+          <li>Ücretsiz ön görüşme</li>
+          <li>Net fiyat</li>
+          <li>Hızlı teslimat</li>
+        </ul>
+      </div>
+
+      <!-- SEÇENEK 2: İletişim formu — şimdilik gizli, kodu duruyor.
+           İstemci tarafı doğrulama hazır; gönderim ucu için CONFIG.formEndpoint. -->
+      <form class="form" id="contactForm" data-contact-panel="form" novalidate data-reveal>
         <div class="field-row">
           <div class="field">
             <label for="fName">Ad Soyad</label>
@@ -1291,6 +1399,11 @@ const CONFIG = {
   email:        '',                 // örn. 'merhaba@pixelform.com'
   instagram:    '',                 // örn. '@pixelform'
   pendingLabel: 'Yapım aşamasında',
+
+  // İletişim bölümünde hangi panelin görüneceği:
+  //   'whatsapp' → WhatsApp yönlendirme kartı  (şu an aktif)
+  //   'form'     → iletişim formu (kodu duruyor, e-posta hazır olunca aç)
+  contactMode:  'whatsapp',
 
   formEndpoint: ''   // örn. 'https://formspree.io/f/xxxx' — boşsa form yerel olarak onaylanır
 };
@@ -1654,7 +1767,9 @@ function initHero () {
    ========================================================================== */
 function initReveals () {
   if (!hasGsap) return;
-  const items = $$('[data-reveal]');
+  // Gizli paneldeki ([hidden]) öğeler için tetikleyici kurma — ölçüleri 0 olur
+  // ve boş yere ScrollTrigger üretirler.
+  const items = $$('[data-reveal]').filter(el => !el.hidden && !el.closest('[hidden]'));
   if (reduceMotion) { gsap.set(items, { clearProps: 'all' }); return; }
 
   items.forEach(el => {
@@ -1912,7 +2027,18 @@ function initProcess () {
 /* ==========================================================================
    11. İLETİŞİM FORMU — istemci tarafı doğrulama
    ========================================================================== */
+/* CONFIG.contactMode'a göre iletişim panellerinden birini gösterir.
+   Gizlenen panel DOM'da kalır ama [hidden] ile hem düzenden hem erişilebilirlik
+   ağacından çıkar — ekran okuyucular da görmez. */
+function initContactPanel () {
+  $$('[data-contact-panel]').forEach(el => {
+    el.hidden = el.dataset.contactPanel !== CONFIG.contactMode;
+  });
+}
+
 function initForm () {
+  // Form kapalıysa dinleyicileri hiç bağlama.
+  if (CONFIG.contactMode !== 'form') return;
   const form   = $('#contactForm');
   const status = $('#formStatus');
   if (!form) return;
@@ -1993,6 +2119,7 @@ function initForm () {
    ========================================================================== */
 function init () {
   applyConfig();
+  initContactPanel();   // applyConfig'den SONRA: gizli panele gereksiz iş yapılmasın
   watchMode();
   const nav = initNav();
 
