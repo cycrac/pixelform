@@ -760,6 +760,15 @@ html.no-gsap .work-info{ opacity:1; }
   transform:translateX(7px); border-color:rgba(var(--cyan-rgb),.45);
   box-shadow:0 18px 40px -22px rgba(var(--cyan-rgb),.9);
 }
+/* Henüz hazır olmayan kanal: href'i silindiği için zaten tıklanamaz,
+   burada görsel olarak da pasif gösteriliyor. */
+a.is-pending{ cursor:default; }
+.social a.is-pending{ opacity:.6; }
+.social a.is-pending:hover{
+  transform:none; border-color:var(--line); box-shadow:none;
+}
+.social a.is-pending .ic{ filter:grayscale(.6); }
+.footer-bottom a.is-pending{ color:var(--muted); }
 .social .ic{
   width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
   background:var(--grad); flex:none;
@@ -1171,18 +1180,18 @@ html.no-gsap .work-info{ opacity:1; }
             <span><b>WhatsApp</b><span data-phone>+90 555 555 55 55</span></span>
           </a>
 
-          <a href="mailto:merhaba@pixelform.com">
+          <a class="is-pending">
             <span class="ic" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1m1.6 2L12 12.3 19.4 7z"/></svg>
             </span>
-            <span><b>E-posta</b><span data-email>merhaba@pixelform.com</span></span>
+            <span><b>E-posta</b><span data-email>Yapım aşamasında</span></span>
           </a>
 
-          <a href="https://instagram.com/pixelform" target="_blank" rel="noopener">
+          <a class="is-pending">
             <span class="ic" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2m0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6m5.8-3.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4"/></svg>
             </span>
-            <span><b>Instagram</b><span data-social>@pixelform</span></span>
+            <span><b>Instagram</b><span data-social>Yapım aşamasında</span></span>
           </a>
         </div>
       </div>
@@ -1252,7 +1261,7 @@ html.no-gsap .work-info{ opacity:1; }
     </div>
     <div class="footer-bottom">
       <span>© <span id="year">2026</span> <span data-brand>PIXELFORM</span>. Tüm hakları saklıdır.</span>
-      <span>İstanbul, Türkiye · <a href="mailto:merhaba@pixelform.com" data-email>merhaba@pixelform.com</a></span>
+      <span>İstanbul, Türkiye · <a class="is-pending" data-email>Yapım aşamasında</a></span>
     </div>
   </div>
 </footer>
@@ -1274,9 +1283,15 @@ html.no-gsap .work-info{ opacity:1; }
    ========================================================================== */
 const CONFIG = {
   brand:        'PIXELFORM',
-  email:        'merhaba@pixelform.com',
   phone:        '+90 546 620 42 64',
-  instagram:    '@pixelform',
+
+  // E-posta ve Instagram henüz hazır değil. BOŞ bırakıldıkları sürece sayfada
+  // pendingLabel yazar ve bağlantıları devre dışı kalır. Hazır olduklarında
+  // buraya yazman yeterli — metin ve tıklanabilir link kendiliğinden geri gelir.
+  email:        '',                 // örn. 'merhaba@pixelform.com'
+  instagram:    '',                 // örn. '@pixelform'
+  pendingLabel: 'Yapım aşamasında',
+
   formEndpoint: ''   // örn. 'https://formspree.io/f/xxxx' — boşsa form yerel olarak onaylanır
 };
 
@@ -1299,17 +1314,42 @@ const lerp  = (a, b, t) => a + (b - a) * t;
    ========================================================================== */
 function applyConfig () {
   $$('[data-brand]').forEach(el => { el.textContent = CONFIG.brand; });
-  $$('[data-email]').forEach(el => {
-    el.textContent = CONFIG.email;
-    if (el.tagName === 'A') el.href = 'mailto:' + CONFIG.email;
-  });
+
+  /* Bir iletişim kanalını yaz. CONFIG'deki değer boşsa kanal "hazır değil"
+     sayılır: metin yerine pendingLabel yazılır ve sarmalayan bağlantı devre
+     dışı bırakılır (href silinince <a> tıklanamaz ve odaklanamaz olur).
+     Böylece kimse boş bir mail penceresine ya da olmayan bir profile düşmez. */
+  const kanal = (selector, value, buildHref) => {
+    $$(selector).forEach(el => {
+      const link = el.closest('a');   // hem <a data-x> hem <a><span data-x></span> için çalışır
+      if (value) {
+        el.textContent = value;
+        if (link) {
+          link.href = buildHref(value);
+          link.classList.remove('is-pending');
+        }
+      } else {
+        el.textContent = CONFIG.pendingLabel;
+        if (link) {
+          link.removeAttribute('href');
+          link.removeAttribute('target');
+          link.removeAttribute('rel');
+          link.classList.add('is-pending');
+        }
+      }
+    });
+  };
+
+  kanal('[data-email]',  CONFIG.email,     v => 'mailto:' + v);
+  kanal('[data-social]', CONFIG.instagram, v => 'https://instagram.com/' + v.replace(/^@/, ''));
+
   $$('[data-phone]').forEach(el => { el.textContent = CONFIG.phone; });
   // WhatsApp bağlantısı numaradan türetilir: CONFIG.phone'u değiştirmen yeterli,
   // hem görünen metin hem link birlikte güncellenir.
   $$('[data-wa]').forEach(el => {
     el.href = 'https://wa.me/' + CONFIG.phone.replace(/\D/g, '');
   });
-  $$('[data-social]').forEach(el => { el.textContent = CONFIG.instagram; });
+
   const y = $('#year'); if (y) y.textContent = String(new Date().getFullYear());
   document.title = CONFIG.brand + ' — Dijital Tasarım & Geliştirme Stüdyosu';
 }
@@ -1938,7 +1978,10 @@ function initForm () {
       if (hasGsap && !reduceMotion) gsap.from(status, { y: 10, opacity: 0, duration: 0.45 });
     } catch (err) {
       status.className = 'form-status';
-      status.textContent = 'Gönderilemedi. Dilersen doğrudan ' + CONFIG.email + ' adresine yazabilirsin.';
+      // E-posta henüz yoksa kullanıcıyı çalışan tek kanala (WhatsApp) yönlendir.
+      status.textContent = CONFIG.email
+        ? 'Gönderilemedi. Dilersen doğrudan ' + CONFIG.email + ' adresine yazabilirsin.'
+        : 'Gönderilemedi. Dilersen WhatsApp\'tan ' + CONFIG.phone + ' numarasına yazabilirsin.';
     } finally {
       btn.disabled = false;
     }
