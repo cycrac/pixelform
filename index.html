@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PIXELFORM — Dijital Tasarım & Geliştirme Stüdyosu</title>
+<meta name="description" content="PIXELFORM; markalar için modern web siteleri, e-ticaret sistemleri ve dijital ürünler tasarlayıp geliştiren bir tasarım stüdyosudur.">
+<meta name="theme-color" content="#0A0A14">
+
+<!-- ==========================================================================
+     ERKEN MOD TESPİTİ
+     Sayfa boyanmadan önce çalışır; böylece mobil/reduced-motion durumunda
+     3B sahne hiç kurulmaz ve içerik "zıplamaz".
+     ========================================================================== -->
+<script>
+(function () {
+  var d = document.documentElement;
+  d.classList.add('js');
+  var simple =
+    window.matchMedia('(max-width: 999px)').matches ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  d.classList.toggle('mode-simple', simple);
+})();
+</script>
+
+<!-- Google Fonts: Space Grotesk (başlık) + Outfit (gövde) — latin-ext ile Türkçe karakter desteği -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   1. TASARIM TOKENLARI
+   Renk, tipografi ve ölçü değerlerinin tamamı burada. Marka rengini
+   değiştirmek için sadece --violet / --cyan / --pink değerlerini düzenle.
+   ========================================================================== */
+:root{
+  /* Yüzeyler */
+  --bg:        #0A0A14;
+  --bg-soft:   #10101F;
+  --surface:   rgba(255,255,255,.045);
+  --surface-2: rgba(255,255,255,.075);
+  --line:      rgba(255,255,255,.10);
+  --line-soft: rgba(255,255,255,.06);
+
+  /* Metin */
+  --ink:    #F2F2FA;
+  --ink-2:  #B8B8D4;
+  --muted:  #8C8CAE;
+
+  /* Vurgu paleti (rgb üçlüsü olarak da tutuluyor ki rgba() ile kullanılabilsin) */
+  --violet: #7C3AED;  --violet-rgb: 124,58,237;
+  --cyan:   #06B6D4;  --cyan-rgb:   6,182,212;
+  --pink:   #EC4899;  --pink-rgb:   236,72,153;
+  --orange: #F97316;  --orange-rgb: 249,115,22;
+
+  --grad:      linear-gradient(110deg, var(--violet) 0%, var(--cyan) 52%, var(--pink) 100%);
+  --grad-warm: linear-gradient(110deg, var(--cyan) 0%, var(--violet) 50%, var(--orange) 100%);
+
+  /* Ölçüler */
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 34px;
+  --container: 1220px;
+  --pad: clamp(20px, 5vw, 64px);
+  --section-y: clamp(88px, 12vh, 160px);
+
+  --ease-out: cubic-bezier(.16,1,.3,1);
+}
+
+/* ==========================================================================
+   2. TEMEL / RESET
+   ========================================================================== */
+*,*::before,*::after{ box-sizing:border-box; }
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
+  /* clip (hidden değil) — scroll konteyneri OLUŞTURMAZ,
+     böylece .work-stage'in position:sticky davranışı garanti altında kalır. */
+  overflow-x:clip;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-weight:300;
+  font-size:clamp(15px, .55vw + 13.5px, 17px);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Space Grotesk', system-ui, sans-serif;
+  font-weight:600;
+  letter-spacing:-.035em;
+  line-height:1.05;
+  margin:0;
+}
+p{margin:0;}
+img,svg,canvas{display:block; max-width:100%;}
+a{color:inherit; text-decoration:none;}
+ul{list-style:none; margin:0; padding:0;}
+button,input,select,textarea{font:inherit; color:inherit;}
+
+/* Klavye ile gezinme görünürlüğü */
+:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* İçeriğe atla bağlantısı */
+.skip{
+  position:absolute; left:-9999px; top:12px; z-index:999;
+  background:var(--violet); color:#fff; padding:12px 20px; border-radius:99px;
+}
+.skip:focus{ left:12px; }
+
+/* Yardımcılar */
+.container{
+  width:100%; max-width:var(--container);
+  margin-inline:auto; padding-inline:var(--pad);
+}
+.section{ padding-block:var(--section-y); position:relative; z-index:2; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:'Space Grotesk', sans-serif;
+  font-size:.78rem; font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-2);
+}
+.eyebrow::before{
+  content:''; width:28px; height:2px; border-radius:2px; background:var(--grad);
+}
+.grad-text{
+  background:var(--grad);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.lead{ color:var(--ink-2); font-size:clamp(1rem,1.1vw + .75rem,1.2rem); max-width:56ch; }
+
+.h-xl{ font-size:clamp(2.7rem, 7.5vw, 6.4rem); }
+.h-lg{ font-size:clamp(2.1rem, 5.2vw, 4.1rem); }
+.h-md{ font-size:clamp(1.4rem, 2.2vw, 2rem); }
+
+/* ==========================================================================
+   3. BUTONLAR
+   ========================================================================== */
+.btn{
+  --btn-glow: rgba(var(--violet-rgb), .55);
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:15px 30px; border-radius:99px; border:1px solid transparent;
+  font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:.95rem;
+  letter-spacing:-.01em; cursor:pointer; background:none;
+  transition:transform .35s var(--ease-out), box-shadow .35s var(--ease-out),
+             background-color .3s ease, border-color .3s ease;
+  will-change:transform;
+}
+.btn-primary{
+  background:var(--grad); color:#fff;
+  box-shadow:0 10px 34px -12px var(--btn-glow);
+}
+.btn-primary:hover,.btn-primary:focus-visible{
+  transform:translateY(-3px) scale(1.035);
+  box-shadow:0 20px 52px -14px var(--btn-glow), 0 0 0 1px rgba(255,255,255,.12) inset;
+}
+.btn-ghost{
+  background:var(--surface); color:var(--ink);
+  border-color:var(--line); backdrop-filter:blur(10px);
+}
+.btn-ghost:hover,.btn-ghost:focus-visible{
+  transform:translateY(-3px) scale(1.035);
+  background:var(--surface-2); border-color:rgba(var(--cyan-rgb),.5);
+  box-shadow:0 18px 44px -18px rgba(var(--cyan-rgb),.65);
+}
+.btn-sm{ padding:11px 22px; font-size:.85rem; }
+
+/* ==========================================================================
+   4. ARKA PLAN TÜNELİ (sabit katman)
+   Işınlar + parçacık canvas'ı + genişleyen halkalar + glow + renk tonu.
+   Tümü transform/opacity ile sürülüyor; tek rAF döngüsünden besleniyor.
+   ========================================================================== */
+.bg{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 50%, #14142B 0%, #0B0B18 48%, #06060E 100%);
+}
+.bg > *{ position:absolute; inset:0; }
+
+/* 4.1 — Merkeze kaçan ışınlar (konik gradient) */
+.bg-rays{
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%,
+      rgba(255,255,255,.055) 0deg 1.1deg,
+      transparent 1.1deg 7.5deg);
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, transparent 6%, #000 32%, #000 62%, transparent 88%);
+  mask-image:radial-gradient(circle at 50% 50%, transparent 6%, #000 32%, #000 62%, transparent 88%);
+  will-change:transform;
+}
+
+/* 4.2 — Sonsuz döngüde merkezden dışa açılan halkalar (asıl tünel hissi) */
+.bg-ring{
+  border-radius:50%;
+  inset:50% auto auto 50%;
+  width:min(92vw, 900px); aspect-ratio:1; height:auto;
+  margin:0; translate:-50% -50%;
+  background:
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent 0 46px,
+      rgba(var(--cyan-rgb), .16) 46px 47.5px,
+      transparent 47.5px 96px,
+      rgba(var(--violet-rgb), .16) 96px 97.5px);
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 0 44%, transparent 72%);
+  mask-image:radial-gradient(circle at 50% 50%, #000 0 44%, transparent 72%);
+  will-change:transform, opacity;
+}
+
+/* 4.3 — Parçacıklar (canvas, 3 parallax hız grubu) */
+.bg-canvas{ width:100%; height:100%; opacity:.9; }
+
+/* 4.4 — Merkezi ışık kaynağı */
+.bg-glow{
+  background:
+    radial-gradient(38% 38% at 50% 50%, rgba(var(--violet-rgb), .5) 0%, transparent 70%),
+    radial-gradient(22% 22% at 50% 50%, rgba(var(--cyan-rgb), .45) 0%, transparent 70%);
+  filter:blur(28px);
+  will-change:opacity, transform;
+}
+
+/* 4.5 — Scroll ile kayan renk tonu (lacivert → mor → turkuaz) */
+.bg-tint{
+  background:linear-gradient(180deg,
+    rgba(12,16,58,.55) 0%,
+    rgba(56,18,96,.42) 45%,
+    rgba(6,72,92,.42) 100%);
+  mix-blend-mode:screen;
+  will-change:opacity;
+}
+
+/* 4.6 — Kenar karartma: içeriğin okunurluğunu garanti eder */
+.bg-vignette{
+  background:
+    radial-gradient(120% 80% at 50% 50%, transparent 30%, rgba(6,6,14,.78) 100%),
+    linear-gradient(180deg, rgba(10,10,20,.75) 0%, transparent 18%, transparent 82%, rgba(10,10,20,.8) 100%);
+}
+
+/* ==========================================================================
+   5. SCROLL İLERLEME ÇUBUĞU + CUSTOM CURSOR
+   ========================================================================== */
+.progress{
+  position:fixed; top:0; left:0; right:0; height:3px; z-index:120;
+  background:rgba(255,255,255,.05); pointer-events:none;
+}
+.progress i{
+  display:block; height:100%; width:100%;
+  background:var(--grad); transform:scaleX(0); transform-origin:0 50%;
+  box-shadow:0 0 14px rgba(var(--violet-rgb),.8);
+  will-change:transform;
+}
+
+.cursor-dot,.cursor-ring{
+  position:fixed; top:0; left:0; z-index:200;
+  pointer-events:none; border-radius:50%;
+  translate:-50% -50%; will-change:transform; opacity:0;
+  transition:opacity .3s ease;
+}
+.cursor-dot{ width:7px; height:7px; background:var(--cyan); }
+.cursor-ring{
+  width:36px; height:36px; border:1.5px solid rgba(255,255,255,.4);
+  transition:opacity .3s ease, width .3s var(--ease-out), height .3s var(--ease-out),
+             border-color .3s ease, background-color .3s ease;
+}
+.cursor-ready .cursor-dot,.cursor-ready .cursor-ring{ opacity:1; }
+.cursor-ring.is-hot{
+  width:64px; height:64px;
+  border-color:rgba(var(--cyan-rgb),.85);
+  background:rgba(var(--cyan-rgb),.09);
+}
+/* Dokunmatik cihazlarda özel imleç kapalı */
+@media (pointer:coarse){ .cursor-dot,.cursor-ring{ display:none; } }
+
+/* ==========================================================================
+   6. ÜST MENÜ
+   ========================================================================== */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; gap:22px;
+  padding:16px var(--pad);
+  transition:background-color .4s ease, backdrop-filter .4s ease, border-color .4s ease;
+  border-bottom:1px solid transparent;
+}
+.nav.is-stuck{
+  background:rgba(10,10,20,.72);
+  backdrop-filter:blur(16px) saturate(140%);
+  border-bottom-color:var(--line-soft);
+}
+.brand{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:'Space Grotesk', sans-serif; font-weight:700;
+  letter-spacing:-.02em; font-size:1.08rem;
+  margin-right:auto;
+}
+.brand-mark{
+  width:26px; height:26px; border-radius:8px; background:var(--grad);
+  box-shadow:0 0 20px -4px rgba(var(--violet-rgb),.9);
+  position:relative; flex:none;
+}
+.brand-mark::after{
+  content:''; position:absolute; inset:7px; border-radius:3px; background:var(--bg);
+}
+.nav-links{ display:flex; align-items:center; gap:4px; }
+.nav-links a{
+  position:relative; padding:9px 15px; border-radius:99px;
+  font-size:.92rem; color:var(--ink-2);
+  transition:color .25s ease, background-color .25s ease;
+}
+.nav-links a::after{
+  content:''; position:absolute; left:15px; right:15px; bottom:4px; height:1.5px;
+  background:var(--grad); transform:scaleX(0); transform-origin:0 50%;
+  transition:transform .35s var(--ease-out);
+}
+.nav-links a:hover{ color:var(--ink); }
+.nav-links a:hover::after{ transform:scaleX(1); }
+
+.nav-toggle{
+  display:none; width:44px; height:40px; border-radius:12px;
+  border:1px solid var(--line); background:var(--surface); cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px;
+}
+.nav-toggle span{
+  display:block; width:17px; height:2px; border-radius:2px; background:var(--ink);
+  transition:transform .3s var(--ease-out), opacity .2s ease;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+@media (max-width:900px){
+  .nav > .btn{ display:none; }
+  .nav-toggle{ display:flex; }
+  .nav-links{
+    position:absolute; top:100%; left:var(--pad); right:var(--pad);
+    flex-direction:column; align-items:stretch; gap:2px;
+    padding:12px; border-radius:var(--r-lg);
+    background:rgba(14,14,28,.94); backdrop-filter:blur(20px);
+    border:1px solid var(--line);
+    opacity:0; visibility:hidden; transform:translateY(-12px);
+    transition:opacity .3s ease, transform .3s var(--ease-out), visibility .3s;
+  }
+  .nav-links.is-open{ opacity:1; visibility:visible; transform:translateY(0); }
+  .nav-links a{ padding:13px 16px; font-size:1rem; }
+}
+
+/* ==========================================================================
+   7. HERO
+   ========================================================================== */
+.hero{
+  position:relative; z-index:2;
+  min-height:100svh; display:flex; align-items:center;
+  padding-block:120px 90px;
+}
+.hero-inner{ max-width:960px; }
+.hero h1{ margin:22px 0 26px; }
+/* Kelime kelime giriş animasyonu için maske */
+.word{ display:inline-block; overflow:hidden; vertical-align:bottom; padding-bottom:.06em; }
+.word > span{ display:inline-block; will-change:transform; }
+
+.hero-chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:44px; }
+.chip{
+  padding:8px 16px; border-radius:99px; font-size:.82rem; color:var(--ink-2);
+  background:var(--surface); border:1px solid var(--line-soft); backdrop-filter:blur(8px);
+}
+
+.scroll-cue{
+  position:absolute; left:50%; bottom:34px; translate:-50% 0;
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+  font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted);
+}
+.scroll-cue i{
+  display:block; width:1.5px; height:46px; border-radius:2px;
+  background:linear-gradient(180deg, transparent, var(--cyan));
+  transform-origin:50% 0;
+  animation:cue 2.1s var(--ease-out) infinite;
+}
+@keyframes cue{
+  0%{ transform:scaleY(.2); opacity:0; }
+  40%{ transform:scaleY(1); opacity:1; }
+  100%{ transform:scaleY(1) translateY(46px); opacity:0; }
+}
+
+/* ==========================================================================
+   8. HİZMETLER (3B tilt kartlar)
+   ========================================================================== */
+.section-head{ max-width:640px; margin-bottom:clamp(44px,6vw,72px); }
+.section-head h2{ margin:18px 0 18px; }
+
+.svc-grid{
+  display:grid; gap:22px;
+  grid-template-columns:repeat(auto-fit, minmax(255px,1fr));
+  perspective:1000px;
+}
+.svc{
+  position:relative; padding:34px 30px 32px; border-radius:var(--r-lg);
+  background:linear-gradient(160deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+  border:1px solid var(--line); backdrop-filter:blur(14px);
+  transform-style:preserve-3d; will-change:transform;
+  transition:border-color .35s ease, box-shadow .35s ease;
+  overflow:hidden;
+}
+.svc::before{
+  content:''; position:absolute; inset:-1px; border-radius:inherit; opacity:0;
+  background:radial-gradient(60% 60% at var(--mx,50%) var(--my,50%),
+             rgba(var(--cyan-rgb),.20), transparent 68%);
+  transition:opacity .35s ease; pointer-events:none;
+}
+.svc:hover{
+  border-color:rgba(var(--cyan-rgb),.4);
+  box-shadow:0 34px 70px -34px rgba(var(--violet-rgb),.85);
+}
+.svc:hover::before{ opacity:1; }
+.svc-icon{
+  width:52px; height:52px; border-radius:16px; display:grid; place-items:center;
+  background:var(--grad); margin-bottom:22px; transform:translateZ(45px);
+  box-shadow:0 14px 30px -12px rgba(var(--violet-rgb),.9);
+}
+.svc-icon svg{ width:24px; height:24px; stroke:#fff; fill:none; stroke-width:1.7; }
+.svc h3{ font-size:1.22rem; margin-bottom:12px; transform:translateZ(30px); }
+.svc p{ color:var(--ink-2); font-size:.95rem; transform:translateZ(18px); }
+.svc-tags{ display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; transform:translateZ(24px); }
+.svc-tags li{
+  font-size:.74rem; padding:5px 11px; border-radius:99px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line-soft); color:var(--muted);
+}
+
+/* ==========================================================================
+   9. ÇALIŞMALARIMIZ — ANA 3B SCROLL SAHNESİ
+   .work        : 620vh'lik scroll alanı (pin mesafesi)
+   .work-stage  : GSAP tarafından pinlenen 100vh'lik sahne
+   .work-space  : perspective 1200px — kartların yaşadığı 3B uzay
+   .work-texts  : kartların ÜSTÜNDE duran 2B metin katmanı (okunurluk için)
+   ========================================================================== */
+.work{ position:relative; z-index:2; height:620vh; }
+/* Sahne CSS sticky ile sabitlenir (GSAP pin yerine): 620vh'lik bölümün içinde
+   100vh'lik sahne tam 520vh boyunca yapışık kalır. ScrollTrigger yalnızca
+   zaman çizelgesini scrub eder — pin-spacer matematiği yok, iki uçta da temiz. */
+.work-stage{
+  height:100svh; position:sticky; top:0; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.work-head{
+  position:relative; z-index:6;
+  padding:clamp(90px,12vh,130px) var(--pad) 0;
+  max-width:var(--container); margin-inline:auto; width:100%;
+  pointer-events:none;
+  will-change:transform, opacity;   /* ilk kartla birlikte yukarı süzülür */
+}
+/* Kartlar yukarı doğru çıkarken başlığın ARKASINDAN geçiyor; bu yumuşak perde
+   başlığın her koşulda okunur kalmasını sağlar (z-index:-1 ile başlığın kendi
+   yığın bağlamında, metnin altında ama kartların üstünde durur). */
+.work-head::before{
+  content:''; position:absolute; inset:-30px 0 -70px; z-index:-1;
+  background:linear-gradient(180deg, rgba(10,10,20,.9) 30%, transparent 100%);
+  pointer-events:none;
+}
+html.mode-simple .work-head::before{ display:none; }
+.work-head h2{ margin-top:14px; }
+
+/* 9.1 — 3B uzay ve kartlar */
+.work-space{
+  position:absolute; inset:0; z-index:2;
+  perspective:1200px;
+  perspective-origin:50% 50%;
+}
+.work-card{
+  position:absolute; top:50%; left:50%;
+  width:min(46vw, 640px);
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+  will-change:transform, opacity;
+  margin:0;
+}
+html.js .work-card{ opacity:0; }          /* GSAP devralana kadar gizli */
+.work-card-inner{ will-change:transform; } /* float animasyonu burada — scrub ile çakışmaz */
+
+/* 9.2 — Tarayıcı penceresi görünümü */
+.browser{
+  border-radius:var(--r-md); overflow:hidden;
+  background:rgba(16,16,32,.9);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:
+    0 50px 100px -34px rgba(0,0,0,.95),
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 0 70px -30px rgba(var(--violet-rgb),.7);
+}
+.browser-bar{
+  display:flex; align-items:center; gap:14px; padding:11px 14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.02));
+  border-bottom:1px solid var(--line-soft);
+}
+.dots{ display:flex; gap:7px; flex:none; }
+.dots i{ width:11px; height:11px; border-radius:50%; display:block; }
+.dots i:nth-child(1){ background:#FF5F57; }
+.dots i:nth-child(2){ background:#FEBC2E; }
+.dots i:nth-child(3){ background:#28C840; }
+.browser-url{
+  flex:1; text-align:center; font-size:.72rem; color:var(--muted);
+  background:rgba(255,255,255,.055); border-radius:99px; padding:5px 14px;
+  border:1px solid var(--line-soft);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* 9.3 — CSS ile üretilmiş soyut mockup'lar (görsel dosyası yok) */
+.mock{ position:relative; aspect-ratio:16/10; overflow:hidden; background:#0C0C1A; }
+.mock > *{ position:absolute; display:block; }
+.mock::after{ /* ekran parlaması */
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, rgba(255,255,255,.09) 0%, transparent 42%);
+}
+/* Renk temaları */
+.mock[data-theme="1"]{ --c1:var(--violet-rgb); --c2:var(--orange-rgb); }
+.mock[data-theme="2"]{ --c1:var(--cyan-rgb);   --c2:var(--violet-rgb); }
+.mock[data-theme="3"]{ --c1:var(--violet-rgb); --c2:var(--cyan-rgb); }
+.mock[data-theme="4"]{ --c1:var(--pink-rgb);   --c2:var(--violet-rgb); }
+.mock[data-theme="5"]{ --c1:var(--cyan-rgb);   --c2:var(--pink-rgb); }
+.mock[data-theme="6"]{ --c1:var(--orange-rgb); --c2:var(--cyan-rgb); }
+
+.m-nav,.m-top{ top:0; left:0; right:0; height:10%; background:rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05); }
+/* Varyant A — tanıtım sayfası */
+.mock--a .m-hero{
+  top:10%; left:0; right:0; height:46%;
+  background:
+    radial-gradient(60% 90% at 78% 20%, rgba(255,255,255,.22), transparent 60%),
+    linear-gradient(135deg, rgba(var(--c1),.9), rgba(var(--c2),.7));
+}
+.mock--a .m-line{ height:4.5%; border-radius:99px; background:rgba(255,255,255,.22); }
+.mock--a .m-line.l1{ top:62%; left:7%; width:48%; }
+.mock--a .m-line.l2{ top:70%; left:7%; width:32%; background:rgba(255,255,255,.12); }
+.mock--a .m-btn{
+  top:61%; right:7%; width:19%; height:9.5%; border-radius:99px;
+  background:linear-gradient(90deg, rgba(var(--c1),1), rgba(var(--c2),1));
+}
+.mock--a .m-tiles{ bottom:6%; left:7%; right:7%; height:16%; display:flex; gap:3%; }
+.mock--a .m-tiles i{
+  flex:1; border-radius:7px; background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.06);
+}
+/* Varyant B — panel / dashboard */
+.mock--b .m-side{
+  top:0; bottom:0; left:0; width:15%;
+  background:rgba(255,255,255,.05); border-right:1px solid rgba(255,255,255,.06);
+}
+.mock--b .m-top{ left:15%; }
+.mock--b .m-stats{ top:19%; left:20%; right:6%; height:22%; display:flex; gap:3.5%; }
+.mock--b .m-stats i{
+  flex:1; border-radius:9px;
+  background:linear-gradient(155deg, rgba(var(--c1),.6), rgba(var(--c2),.28));
+  border:1px solid rgba(255,255,255,.08);
+}
+.mock--b .m-chart{
+  left:20%; right:6%; bottom:9%; height:33%;
+  display:flex; align-items:flex-end; gap:3.5%;
+}
+.mock--b .m-chart i{
+  flex:1; border-radius:5px 5px 2px 2px;
+  background:linear-gradient(180deg, rgba(var(--c2),.95), rgba(var(--c1),.32));
+}
+.mock--b .m-chart i:nth-child(1){ height:42%; }
+.mock--b .m-chart i:nth-child(2){ height:68%; }
+.mock--b .m-chart i:nth-child(3){ height:31%; }
+.mock--b .m-chart i:nth-child(4){ height:88%; }
+.mock--b .m-chart i:nth-child(5){ height:56%; }
+.mock--b .m-chart i:nth-child(6){ height:74%; }
+/* Varyant C — ızgara / vitrin */
+.mock--c .m-grid{
+  top:16%; left:6%; right:6%; bottom:7%;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:4%;
+}
+.mock--c .m-grid i{
+  border-radius:9px; border:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(150deg, rgba(var(--c1),.55), rgba(var(--c2),.22));
+}
+.mock--c .m-grid i:nth-child(even){
+  background:linear-gradient(150deg, rgba(var(--c2),.5), rgba(var(--c1),.2));
+}
+
+/* 9.4 — Proje metin katmanı (kartların üstünde, ayrı 2B katman) */
+.work-texts{ position:absolute; inset:0; z-index:5; pointer-events:none; }
+.work-info{
+  position:absolute; top:50%;
+  width:min(24vw, 330px);
+  pointer-events:auto; will-change:transform, opacity;
+}
+html.js .work-info{ opacity:0; }
+.work-info.is-left { left:3.5vw; }
+.work-info.is-right{ right:3.5vw; text-align:right; }
+.work-index{
+  font-family:'Space Grotesk',sans-serif; font-size:.8rem; letter-spacing:.2em;
+  color:var(--muted);
+}
+/* Kategori satırı artık projenin BAŞLIĞI: gradient rengini korur ama
+   başlık ölçüsünde ve başlık tipografisiyle dizilir. */
+.work-cat{
+  display:inline-block; margin:12px 0 0;
+  font-family:'Space Grotesk',sans-serif; font-weight:600;
+  font-size:clamp(1.35rem,2.15vw,1.95rem);
+  letter-spacing:-.02em; line-height:1.15;
+  color:transparent; background:var(--grad);
+  -webkit-background-clip:text; background-clip:text;
+}
+.work-info p{ color:var(--ink-2); font-size:.93rem; margin-top:14px; }
+.work-tags{ display:flex; flex-wrap:wrap; gap:7px; margin-top:18px; }
+.work-info.is-right .work-tags{ justify-content:flex-end; }
+.work-tags li{
+  font-size:.72rem; padding:5px 11px; border-radius:99px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line-soft); color:var(--muted);
+}
+
+/* 9.5 — BASİT MOD: mobil / reduced-motion / GSAP yok
+   display:contents ile iki katman çözülür, order ile kart+metin sıralanır. */
+html.mode-simple .work{ height:auto; }
+html.mode-simple .work-stage{
+  height:auto; min-height:0; overflow:visible; position:static;
+  padding-bottom:var(--section-y);
+  gap:clamp(46px, 9vw, 80px);
+}
+html.mode-simple .work-head{ padding-top:var(--section-y); order:0; }
+html.mode-simple .work-space,
+html.mode-simple .work-texts{ display:contents; }
+html.mode-simple .work-space{ perspective:none; }
+html.mode-simple .work-card{
+  position:relative; top:auto; left:auto;
+  width:min(560px, calc(100% - var(--pad) * 2)); margin-inline:auto;
+  transform:none;
+}
+html.mode-simple .work-info{
+  position:relative; top:auto; left:auto; right:auto;
+  width:min(560px, calc(100% - var(--pad) * 2)); margin:-14px auto 0;
+  text-align:left;
+}
+/* Kart ve metin tek kolonda iç içe sıralanır: kart1 → metin1 → kart2 → metin2 …
+   Sıra numaraları bilinçli olarak CSS'te tutuluyor: inline özel değişken
+   kullanılsaydı GSAP'in clearProps'u mod değişiminde onları silerdi. */
+html.mode-simple .work-card:nth-child(1){ order:1;  }
+html.mode-simple .work-info:nth-child(1){ order:2;  }
+html.mode-simple .work-card:nth-child(2){ order:3;  }
+html.mode-simple .work-info:nth-child(2){ order:4;  }
+html.mode-simple .work-card:nth-child(3){ order:5;  }
+html.mode-simple .work-info:nth-child(3){ order:6;  }
+html.mode-simple .work-card:nth-child(4){ order:7;  }
+html.mode-simple .work-info:nth-child(4){ order:8;  }
+html.mode-simple .work-card:nth-child(5){ order:9;  }
+html.mode-simple .work-info:nth-child(5){ order:10; }
+html.mode-simple .work-card:nth-child(6){ order:11; }
+html.mode-simple .work-info:nth-child(6){ order:12; }
+html.mode-simple .work-info.is-right .work-tags{ justify-content:flex-start; }
+/* GSAP yüklenemediyse hiçbir şey gizli kalmasın */
+html.no-gsap .work-card,
+html.no-gsap .work-info{ opacity:1; }
+
+/* ==========================================================================
+   10. SÜREÇ
+   ========================================================================== */
+.proc{ position:relative; display:grid; gap:0; }
+.proc-line{
+  position:absolute; left:26px; top:14px; bottom:60px; width:2px;
+  background:rgba(255,255,255,.09); border-radius:2px; overflow:hidden;
+}
+.proc-line i{
+  display:block; width:100%; height:100%; background:var(--grad);
+  transform:scaleY(0); transform-origin:50% 0; will-change:transform;
+}
+.step{
+  position:relative; display:grid;
+  grid-template-columns:54px 1fr; gap:clamp(18px,3vw,40px);
+  padding-block:clamp(22px,3vw,34px);
+  will-change:transform, opacity;
+}
+.step-num{
+  width:54px; height:54px; border-radius:18px; display:grid; place-items:center;
+  font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1.05rem;
+  background:rgba(14,14,28,.95); border:1px solid var(--line);
+  position:relative; z-index:2; flex:none;
+}
+.step.is-active .step-num{
+  background:var(--grad); border-color:transparent; color:#fff;
+  box-shadow:0 0 32px -8px rgba(var(--violet-rgb),.95);
+}
+.step-body{ padding-top:5px; }
+.step h3{ font-size:clamp(1.25rem,2vw,1.65rem); margin-bottom:10px; }
+.step p{ color:var(--ink-2); max-width:60ch; font-size:.97rem; }
+.step-meta{
+  display:inline-block; margin-top:12px; font-size:.78rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+/* ==========================================================================
+   11. İLETİŞİM
+   ========================================================================== */
+.contact-grid{
+  display:grid; gap:clamp(30px,5vw,60px);
+  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); align-items:start;
+}
+@media (max-width:900px){ .contact-grid{ grid-template-columns:1fr; } }
+
+.form{
+  padding:clamp(26px,3.4vw,40px); border-radius:var(--r-xl);
+  background:linear-gradient(165deg, rgba(255,255,255,.08), rgba(255,255,255,.025));
+  border:1px solid var(--line); backdrop-filter:blur(16px);
+  display:grid; gap:18px;
+}
+.field{ display:grid; gap:8px; }
+.field label{ font-size:.83rem; letter-spacing:.06em; color:var(--ink-2); }
+.field input,.field select,.field textarea{
+  width:100%; padding:14px 16px; border-radius:var(--r-sm);
+  background:rgba(10,10,22,.6); border:1px solid var(--line);
+  font-size:.95rem; font-weight:300;
+  transition:border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+.field textarea{ resize:vertical; min-height:130px; }
+.field select{ appearance:none; cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+                   linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 21px) 50%, calc(100% - 15px) 50%;
+  background-size:6px 6px, 6px 6px; background-repeat:no-repeat;
+}
+.field select option{ background:#12122A; color:var(--ink); }
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:rgba(var(--cyan-rgb),.75);
+  box-shadow:0 0 0 3px rgba(var(--cyan-rgb),.15);
+  background:rgba(10,10,22,.85);
+}
+.field.has-error input,.field.has-error select,.field.has-error textarea{
+  border-color:rgba(var(--pink-rgb),.8);
+}
+.field .err{ font-size:.78rem; color:#FF8FB8; min-height:0; }
+.field-row{ display:grid; gap:18px; grid-template-columns:1fr 1fr; }
+@media (max-width:560px){ .field-row{ grid-template-columns:1fr; } }
+.form-note{ font-size:.8rem; color:var(--muted); }
+.form-status{
+  margin:0; font-size:.9rem; padding:0; border-radius:var(--r-sm);
+  color:var(--cyan);
+}
+.form-status.is-ok{
+  padding:14px 16px; background:rgba(var(--cyan-rgb),.1);
+  border:1px solid rgba(var(--cyan-rgb),.35);
+}
+
+.contact-side h2{ margin:18px 0 20px; }
+.social{ display:flex; flex-direction:column; gap:12px; margin-top:34px; }
+.social a{
+  display:flex; align-items:center; gap:15px; padding:16px 20px;
+  border-radius:var(--r-md); background:var(--surface);
+  border:1px solid var(--line); backdrop-filter:blur(10px);
+  transition:transform .35s var(--ease-out), border-color .3s ease, box-shadow .35s ease;
+}
+.social a:hover{
+  transform:translateX(7px); border-color:rgba(var(--cyan-rgb),.45);
+  box-shadow:0 18px 40px -22px rgba(var(--cyan-rgb),.9);
+}
+.social .ic{
+  width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
+  background:var(--grad); flex:none;
+}
+.social .ic svg{ width:19px; height:19px; fill:#fff; }
+.social b{ display:block; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:.98rem; }
+.social span{ display:block; font-size:.83rem; color:var(--muted); }
+
+/* ==========================================================================
+   13. FOOTER
+   ========================================================================== */
+.footer{
+  position:relative; z-index:2; border-top:1px solid var(--line-soft);
+  padding-block:52px 40px; background:rgba(8,8,16,.5); backdrop-filter:blur(10px);
+}
+.footer-top{
+  display:flex; flex-wrap:wrap; gap:26px; align-items:center; justify-content:space-between;
+  padding-bottom:32px; border-bottom:1px solid var(--line-soft);
+}
+.footer-nav{ display:flex; flex-wrap:wrap; gap:6px; }
+.footer-nav a{ padding:8px 14px; border-radius:99px; font-size:.9rem; color:var(--ink-2);
+  transition:color .25s ease, background-color .25s ease; }
+.footer-nav a:hover{ color:var(--ink); background:var(--surface); }
+.footer-bottom{
+  display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between;
+  padding-top:26px; font-size:.84rem; color:var(--muted);
+}
+
+/* ==========================================================================
+   14. HAREKET AZALTMA (prefers-reduced-motion)
+   Süslemeler kapanır, içerik tam görünür kalır.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  .bg-rays,.bg-ring,.bg-canvas{ display:none; }
+  .scroll-cue i{ animation:none; }
+  .cursor-dot,.cursor-ring{ display:none; }
+}
+</style>
+</head>
+
+<body id="top">
+
+<a class="skip" href="#main">İçeriğe geç</a>
+
+<!-- ==========================================================================
+     SCROLL İLERLEME ÇUBUĞU
+     ========================================================================== -->
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+
+<!-- ==========================================================================
+     ÖZEL İMLEÇ
+     ========================================================================== -->
+<div class="cursor-dot"  id="cursorDot"  aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+<!-- ==========================================================================
+     ARKA PLAN TÜNELİ
+     ========================================================================== -->
+<div class="bg" aria-hidden="true">
+  <div class="bg-rays"   id="bgRays"></div>
+  <div class="bg-ring"   id="bgRingA"></div>
+  <div class="bg-ring"   id="bgRingB"></div>
+  <canvas class="bg-canvas" id="bgCanvas"></canvas>
+  <div class="bg-glow"   id="bgGlow"></div>
+  <div class="bg-tint"   id="bgTint"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<!-- ==========================================================================
+     ÜST MENÜ
+     ========================================================================== -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="PIXELFORM ana sayfa">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span data-brand>PIXELFORM</span>
+  </a>
+
+  <nav class="nav-links" id="navLinks" aria-label="Ana menü">
+    <a href="#services">Hizmetler</a>
+    <a href="#work">Çalışmalar</a>
+    <a href="#process">Süreç</a>
+    <a href="#contact">İletişim</a>
+  </nav>
+
+  <a href="#contact" class="btn btn-primary btn-sm">Teklif Al</a>
+
+  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Menüyü aç">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<main id="main">
+
+  <!-- ======================================================================
+       1) HERO
+       ====================================================================== -->
+  <section class="hero container" aria-labelledby="heroTitle">
+    <div class="hero-inner">
+      <span class="eyebrow" data-hero>Dijital Tasarım &amp; Geliştirme Stüdyosu</span>
+
+      <h1 class="h-xl" id="heroTitle">
+        <span class="word"><span>Fikrini</span></span>
+        <span class="word"><span class="grad-text">ekrana</span></span>
+        <span class="word"><span>taşıyoruz.</span></span>
+      </h1>
+
+      <p class="lead" data-hero>
+        <span data-brand>PIXELFORM</span>, markaların dijitalde nasıl göründüğünü ve nasıl
+        çalıştığını baştan kurgular. Hızlı yüklenen, akıcı çalışan ve gerçekten satan
+        web deneyimleri tasarlar ve geliştiririz.
+      </p>
+
+      <ul class="hero-chips" data-hero>
+        <li class="chip">Ustalık</li>
+        <li class="chip">Titizlikle işlenen proje</li>
+        <li class="chip">Hızlı teslimat</li>
+      </ul>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Kaydır</span>
+      <i></i>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       2) HİZMETLER — mouse pozisyonuna göre 3B tilt
+       ====================================================================== -->
+  <section class="section container" id="services" aria-labelledby="servicesTitle">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">02 — Hizmetler</span>
+      <h2 class="h-lg" id="servicesTitle">Uçtan uca <span class="grad-text">dijital üretim</span></h2>
+      <p class="lead">
+        Strateji masasından yayın gününe kadar her adımı tek ekiple yürütüyoruz.
+        Böylece tasarım ile kod arasında hiçbir şey kaybolmuyor.
+      </p>
+    </div>
+
+    <div class="svc-grid">
+      <!-- Web Tasarım -->
+      <article class="svc" data-tilt data-reveal>
+        <div class="svc-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 5h18v12H3z"/><path d="M8 21h8M12 17v4"/><path d="M3 9h18"/>
+          </svg>
+        </div>
+        <h3>Web Tasarım</h3>
+        <p>Markanın karakterini taşıyan, ilk saniyede güven veren arayüzler. Tasarım sistemi kurar, her ekranı tek dilde konuştururuz.</p>
+        <ul class="svc-tags"><li>UI/UX</li><li>Tasarım Sistemi</li><li>Prototip</li></ul>
+      </article>
+
+      <!-- Web Geliştirme -->
+      <article class="svc" data-tilt data-reveal>
+        <div class="svc-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/>
+          </svg>
+        </div>
+        <h3>Web Geliştirme</h3>
+        <p>Temiz, ölçeklenebilir ve bakımı kolay kod. Kurumsal siteden özel panele kadar; hızdan ödün vermeden.</p>
+        <ul class="svc-tags"><li>Frontend</li><li>Headless CMS</li><li>API</li></ul>
+      </article>
+
+      <!-- Performans -->
+      <article class="svc" data-tilt data-reveal>
+        <div class="svc-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2 4 14h7l-1 8 9-12h-7z"/>
+          </svg>
+        </div>
+        <h3>Performans</h3>
+        <p>Core Web Vitals'ta yeşil skorlar, hızlı ilk yükleme ve düzenli ölçüm. Beklemeye zorlayan iyi tasarım, iyi tasarım değildir.</p>
+        <ul class="svc-tags"><li>Core Web Vitals</li><li>Hız Optimizasyonu</li><li>Analitik</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       3) ÇALIŞMALARIMIZ — ANA 3B SCROLL SAHNESİ
+       Kartlar .work-space içinde (3B uzay), metinler .work-texts içinde (2B üst katman).
+       Basit modda display:contents + order ile tek kolonda iç içe sıralanırlar.
+       ====================================================================== -->
+  <section class="work" id="work" aria-labelledby="workTitle">
+    <div class="work-stage">
+
+      <div class="work-head">
+        <span class="eyebrow">03 — Çalışmalarımız</span>
+        <h2 class="h-lg" id="workTitle">Seçilmiş <span class="grad-text">işler</span></h2>
+      </div>
+
+      <!-- 3B uzay: sadece kartlar -->
+      <div class="work-space" id="workSpace">
+
+        <figure class="work-card" role="img"
+                aria-label="Restoran ve cafe web sitesi arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">restoran-cafe</span>
+              </div>
+              <div class="mock mock--a" data-theme="1">
+                <span class="m-nav"></span><span class="m-hero"></span>
+                <span class="m-line l1"></span><span class="m-line l2"></span><span class="m-btn"></span>
+                <span class="m-tiles"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="work-card" role="img"
+                aria-label="Spor salonu yönetim paneli arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">spor-salonu</span>
+              </div>
+              <div class="mock mock--b" data-theme="2">
+                <span class="m-side"></span><span class="m-top"></span>
+                <span class="m-stats"><i></i><i></i><i></i></span>
+                <span class="m-chart"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="work-card" role="img"
+                aria-label="Emlak portföy platformu ilan listesi arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">emlak-portfoy</span>
+              </div>
+              <div class="mock mock--c" data-theme="3">
+                <span class="m-top"></span>
+                <span class="m-grid"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="work-card" role="img"
+                aria-label="Kurumsal kimlik web sitesi arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">kurumsal-kimlik</span>
+              </div>
+              <div class="mock mock--a" data-theme="4">
+                <span class="m-nav"></span><span class="m-hero"></span>
+                <span class="m-line l1"></span><span class="m-line l2"></span><span class="m-btn"></span>
+                <span class="m-tiles"><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="work-card" role="img"
+                aria-label="Otel ve apart web sitesi arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">otel-apart</span>
+              </div>
+              <div class="mock mock--c" data-theme="5">
+                <span class="m-top"></span>
+                <span class="m-grid"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="work-card" role="img"
+                aria-label="İsteğe özel proje panosu arayüz görseli">
+          <div class="work-card-inner">
+            <div class="browser">
+              <div class="browser-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="browser-url">size-ozel</span>
+              </div>
+              <div class="mock mock--b" data-theme="6">
+                <span class="m-side"></span><span class="m-top"></span>
+                <span class="m-stats"><i></i><i></i><i></i></span>
+                <span class="m-chart"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </div>
+
+      <!-- 2B metin katmanı: kartların üstünde, okunurluk garanti -->
+      <div class="work-texts" id="workTexts">
+        <article class="work-info is-left">
+          <span class="work-index">01 / 06</span>
+          <h3 class="work-cat">Restoran / Cafe Siteleri</h3>
+          <p>QR Kodlu Menü ve şube bilgileri tek akışta toplayan sıcak bir vitrin.</p>
+          <ul class="work-tags"><li>UI Tasarım</li><li>QR Kodlu Menü</li><li>CMS</li></ul>
+        </article>
+
+        <article class="work-info is-right">
+          <span class="work-index">02 / 06</span>
+          <h3 class="work-cat">Spor Salonları</h3>
+          <p>Ödeme Takip, Kişisel Programlar ve Salon Tanıtımını tek bir panelde birleştirdik.</p>
+          <ul class="work-tags"><li>Tanıtım</li><li>Panel</li><li>Üyelik Takip</li></ul>
+        </article>
+
+        <article class="work-info is-left">
+          <span class="work-index">03 / 06</span>
+          <h3 class="work-cat">Emlak Portföy Platformu</h3>
+          <p>Binlerce ilan saniyeler içinde filtrelensin. Harita destekli Portföy arayüzü.</p>
+          <ul class="work-tags"><li>Harita</li><li>Filtreleme</li><li>Performans</li></ul>
+        </article>
+
+        <article class="work-info is-right">
+          <span class="work-index">04 / 06</span>
+          <h3 class="work-cat">Kurumsal Kimlik &amp; Web</h3>
+          <p>Markanız için isteğinize dayalı proje arşivi içeren bir kimlik Web Sitesi.</p>
+          <ul class="work-tags"><li>Marka</li><li>Kurumsal Site</li><li>Arşiv</li></ul>
+        </article>
+
+        <article class="work-info is-left">
+          <span class="work-index">05 / 06</span>
+          <h3 class="work-cat">Otel / Apart Sistemleri</h3>
+          <p>Oteller / Apartlar için Kimlik Web sitesi. Harita destekli ve 7/24 otomatik mesaj sistemi ile potansiyel müşteri kaçırmayın.</p>
+          <ul class="work-tags"><li>Oteller</li><li>Otomatik Mesaj Sistemi</li><li>7/24</li></ul>
+        </article>
+
+        <article class="work-info is-right">
+          <span class="work-index">06 / 06</span>
+          <h3 class="work-cat">İSTEĞİNİZE ÖZEL</h3>
+          <p>İsteğiniz neyse bize ulaşın, sizinle özel görüşelim.</p>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       4) SÜREÇ
+       ====================================================================== -->
+  <section class="section container" id="process" aria-labelledby="processTitle">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">04 — Süreç</span>
+      <h2 class="h-lg" id="processTitle">Üç adımda <span class="grad-text">yayında</span></h2>
+      <p class="lead">Sürprizsiz bir yol haritası. Her adımın sonunda somut bir çıktı ve net bir onay noktası var.</p>
+    </div>
+
+    <div class="proc" id="proc">
+      <div class="proc-line" aria-hidden="true"><i id="procLine"></i></div>
+
+      <article class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h3>Tasarım</h3>
+          <p>Prototip hazırlanır, tasarım oluşturulur; her ekran aynı dili konuşur.</p>
+          <span class="step-meta">Çıktı: Tıklanabilir prototip</span>
+        </div>
+      </article>
+
+      <article class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h3>Geliştirme</h3>
+          <p>Atomik hassasiyette kodlama, yönetim ve test aşaması.</p>
+          <span class="step-meta">Çıktı: Test ortamında çalışan site</span>
+        </div>
+      </article>
+
+      <article class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h3>Yayın</h3>
+          <p>Performansı yüksek, size özel alan isimli sitenin yayınlanışı.</p>
+          <span class="step-meta">Çıktı: Canlı site &amp; kullanım eğitimi</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       5) İLETİŞİM / CTA
+       ====================================================================== -->
+  <section class="section container" id="contact" aria-labelledby="contactTitle">
+    <div class="contact-grid">
+
+      <div class="contact-side" data-reveal>
+        <span class="eyebrow">05 — İletişim</span>
+        <h2 class="h-lg" id="contactTitle">Bir sonraki proje <span class="grad-text">seninki olsun.</span></h2>
+        <p class="lead">
+          Aklındaki fikri anlat, 24 saat içinde kapsam ve bütçe önerisiyle dönelim.
+          Henüz net değilse de olur — birlikte netleştiririz.
+        </p>
+
+        <div class="social">
+          <a href="https://wa.me/905466204264" target="_blank" rel="noopener" data-wa>
+            <span class="ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2m0 2a8 8 0 1 1-4.1 14.9l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0 1 12 4m-3.3 4.3c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.8 4.3 3.8 2.1.8 2.6.7 3 .6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.2.1-1.3l-.6-.3s-1.3-.6-1.5-.7c-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5.3-.5v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4z"/></svg>
+            </span>
+            <span><b>WhatsApp</b><span data-phone>+90 555 555 55 55</span></span>
+          </a>
+
+          <a href="mailto:merhaba@pixelform.com">
+            <span class="ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1m1.6 2L12 12.3 19.4 7z"/></svg>
+            </span>
+            <span><b>E-posta</b><span data-email>merhaba@pixelform.com</span></span>
+          </a>
+
+          <a href="https://instagram.com/pixelform" target="_blank" rel="noopener">
+            <span class="ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2m0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6m5.8-3.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4"/></svg>
+            </span>
+            <span><b>Instagram</b><span data-social>@pixelform</span></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Form: istemci tarafı doğrulama var; gönderim ucu için JS'teki
+           CONFIG.formEndpoint değerini doldurman yeterli. -->
+      <form class="form" id="contactForm" novalidate data-reveal>
+        <div class="field-row">
+          <div class="field">
+            <label for="fName">Ad Soyad</label>
+            <input id="fName" name="name" type="text" autocomplete="name" placeholder="Adın ve soyadın" required>
+            <span class="err" data-err-for="fName" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="fMail">E-posta</label>
+            <input id="fMail" name="email" type="email" autocomplete="email" placeholder="ornek@sirket.com" required>
+            <span class="err" data-err-for="fMail" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="fType">Proje Türü</label>
+          <select id="fType" name="type" required>
+            <option value="">Seçiniz…</option>
+            <option>Cafe / Restoran</option>
+            <option>Spor Salonu</option>
+            <option>Emlak Portföy</option>
+            <option>Kurumsal Kimlik</option>
+            <option>Otel / Apart</option>
+            <option>Diğer</option>
+          </select>
+          <span class="err" data-err-for="fType" aria-live="polite"></span>
+        </div>
+
+        <div class="field">
+          <label for="fMsg">Mesaj</label>
+          <textarea id="fMsg" name="message" placeholder="Projenden kısaca bahset: ne yapmak istiyorsun, hedeflerin neler?" required></textarea>
+          <span class="err" data-err-for="fMsg" aria-live="polite"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Teklif İste</button>
+        <p class="form-note">Gönderdiğin bilgiler yalnızca teklif hazırlamak için kullanılır.</p>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ==========================================================================
+     FOOTER
+     ========================================================================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span data-brand>PIXELFORM</span>
+      </a>
+      <nav class="footer-nav" aria-label="Alt menü">
+        <a href="#services">Hizmetler</a>
+        <a href="#work">Çalışmalar</a>
+        <a href="#process">Süreç</a>
+            <a href="#contact">İletişim</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> <span data-brand>PIXELFORM</span>. Tüm hakları saklıdır.</span>
+      <span>İstanbul, Türkiye · <a href="mailto:merhaba@pixelform.com" data-email>merhaba@pixelform.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ==========================================================================
+     GSAP + ScrollTrigger (CDN)
+     ========================================================================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+(function () {
+'use strict';
+
+/* ==========================================================================
+   0. YAPILANDIRMA
+   Marka adı ve iletişim bilgilerini burada değiştirmen yeterli —
+   sayfadaki tüm [data-brand] / [data-email] / [data-phone] alanları güncellenir.
+   ========================================================================== */
+const CONFIG = {
+  brand:        'PIXELFORM',
+  email:        'merhaba@pixelform.com',
+  phone:        '+90 546 620 42 64',
+  instagram:    '@pixelform',
+  formEndpoint: ''   // örn. 'https://formspree.io/f/xxxx' — boşsa form yerel olarak onaylanır
+};
+
+const html          = document.documentElement;
+const hasGsap       = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+const reduceMotion  = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isCoarse      = window.matchMedia('(pointer: coarse)').matches;
+const mqSmall       = window.matchMedia('(max-width: 999px)');
+
+if (!hasGsap) html.classList.add('no-gsap', 'mode-simple');
+if (hasGsap)  gsap.registerPlugin(ScrollTrigger);
+
+const $  = (sel, ctx) => (ctx || document).querySelector(sel);
+const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp  = (a, b, t) => a + (b - a) * t;
+
+/* ==========================================================================
+   1. İÇERİK DOLDURMA
+   ========================================================================== */
+function applyConfig () {
+  $$('[data-brand]').forEach(el => { el.textContent = CONFIG.brand; });
+  $$('[data-email]').forEach(el => {
+    el.textContent = CONFIG.email;
+    if (el.tagName === 'A') el.href = 'mailto:' + CONFIG.email;
+  });
+  $$('[data-phone]').forEach(el => { el.textContent = CONFIG.phone; });
+  // WhatsApp bağlantısı numaradan türetilir: CONFIG.phone'u değiştirmen yeterli,
+  // hem görünen metin hem link birlikte güncellenir.
+  $$('[data-wa]').forEach(el => {
+    el.href = 'https://wa.me/' + CONFIG.phone.replace(/\D/g, '');
+  });
+  $$('[data-social]').forEach(el => { el.textContent = CONFIG.instagram; });
+  const y = $('#year'); if (y) y.textContent = String(new Date().getFullYear());
+  document.title = CONFIG.brand + ' — Dijital Tasarım & Geliştirme Stüdyosu';
+}
+
+/* ==========================================================================
+   2. MOD ANAHTARI (3B sahne ↔ basit dikey akış)
+   CSS tarafı html.mode-simple sınıfına bakar; JS tarafı gsap.matchMedia'ya.
+   ========================================================================== */
+function watchMode () {
+  const sync = () => {
+    const simple = mqSmall.matches || reduceMotion || !hasGsap;
+    html.classList.toggle('mode-simple', simple);
+    if (hasGsap) ScrollTrigger.refresh();
+  };
+  // Safari 13 uyumu için ikili kontrol
+  if (mqSmall.addEventListener) mqSmall.addEventListener('change', sync);
+  else mqSmall.addListener(sync);
+
+  // Yedek: bazı gömülü tarayıcılar programatik boyut değişiminde 'change'
+  // olayını tetiklemiyor. Debounce'lu resize ile modu her koşulda hizala.
+  let t;
+  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(sync, 180); }, { passive: true });
+
+  sync();
+}
+
+/* ==========================================================================
+   3. MENÜ
+   ========================================================================== */
+function initNav () {
+  const nav    = $('#nav');
+  const links  = $('#navLinks');
+  const toggle = $('#navToggle');
+
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Menüyü aç' : 'Menüyü kapat');
+    links.classList.toggle('is-open', !open);
+  });
+
+  // Bir bağlantıya tıklanınca mobil menüyü kapat
+  $$('a', links).forEach(a => a.addEventListener('click', () => {
+    toggle.setAttribute('aria-expanded', 'false');
+    links.classList.remove('is-open');
+  }));
+
+  // Escape ile kapat
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && links.classList.contains('is-open')) {
+      toggle.setAttribute('aria-expanded', 'false');
+      links.classList.remove('is-open');
+      toggle.focus();
+    }
+  });
+
+  return nav;
+}
+
+/* ==========================================================================
+   4. ARKA PLAN TÜNELİ
+   4.1 Parçacık motoru (canvas, 3 parallax hız grubu)
+   4.2 Halka/ışın/glow/tint güncellemesi — hepsi ana rAF döngüsünden beslenir
+   ========================================================================== */
+function createTunnel () {
+  const canvas = $('#bgCanvas');
+  const rays   = $('#bgRays');
+  const ringA  = $('#bgRingA');
+  const ringB  = $('#bgRingB');
+  const glow   = $('#bgGlow');
+  const tint   = $('#bgTint');
+
+  const noop = { step () {}, resize () {} };
+  if (reduceMotion || !canvas) return noop;
+
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return noop;
+
+  let w = 0, h = 0, cx = 0, cy = 0, dpr = 1;
+  const DEPTH = 1400;   // z ekseninin uzunluğu
+  const FOV   = 620;    // projeksiyon odak uzaklığı
+  let stars = [];
+
+  // Parallax katmanları: farklı hız çarpanı + farklı boyut/parlaklık
+  const LAYERS = [
+    { count: 90, speed: 0.35, size: 1.0, alpha: 0.35 },
+    { count: 60, speed: 0.70, size: 1.6, alpha: 0.60 },
+    { count: 34, speed: 1.25, size: 2.4, alpha: 0.95 }
+  ];
+
+  const PALETTE = [
+    [124, 58, 237],   // mor
+    [6, 182, 212],    // turkuaz
+    [236, 72, 153],   // pembe
+    [249, 115, 22]    // turuncu
+  ];
+
+  function spawn (s, atFar) {
+    const a = Math.random() * Math.PI * 2;
+    const r = 120 + Math.random() * 1100;
+    s.x = Math.cos(a) * r;
+    s.y = Math.sin(a) * r * 0.72;   // hafif eliptik: ekran oranına yakın
+    s.z = atFar ? DEPTH : Math.random() * DEPTH;
+    s.c = PALETTE[(Math.random() * PALETTE.length) | 0];
+    return s;
+  }
+
+  function build () {
+    // Ekran alanına göre parçacık sayısını ölçekle (mobilde daha az iş)
+    const scale = clamp((w * h) / (1440 * 900), 0.35, 1);
+    stars = [];
+    LAYERS.forEach(L => {
+      const n = Math.round(L.count * scale);
+      for (let i = 0; i < n; i++) stars.push(spawn({ L: L }, false));
+    });
+  }
+
+  function resize () {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.clientWidth; h = canvas.clientHeight;
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx = w / 2; cy = h / 2;
+    build();
+  }
+
+  let ringT = 0;   // halka döngüsünün fazı (0..1)
+  let rayR  = 0;   // ışınların dönüş açısı
+
+  /**
+   * @param {number} dt   saniye cinsinden kare süresi (0.016 civarı)
+   * @param {number} p    sayfa scroll ilerlemesi 0..1
+   * @param {number} vel  yumuşatılmış scroll hızı (px/kare)
+   */
+  function step (dt, p, vel) {
+    /* --- 4.1 Parçacıklar --- */
+    ctx.clearRect(0, 0, w, h);
+    const push = (110 + Math.abs(vel) * 9) * dt;   // scroll hızlandıkça tünelde hızlanırız
+
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      s.z -= push * s.L.speed;
+      if (s.z <= 12) { spawn(s, true); continue; }
+
+      const k  = FOV / s.z;
+      const px = cx + s.x * k;
+      const py = cy + s.y * k;
+
+      // Ekran dışına çıkanları geri gönder
+      if (px < -80 || px > w + 80 || py < -80 || py > h + 80) { spawn(s, true); continue; }
+
+      const depth = 1 - s.z / DEPTH;              // 0 = uzak, 1 = yakın
+      const r = Math.max(0.4, depth * 3.1 * s.L.size);
+      const a = depth * depth * s.L.alpha;
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(' + s.c[0] + ',' + s.c[1] + ',' + s.c[2] + ',' + a.toFixed(3) + ')';
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* --- 4.2 Genişleyen halkalar: sonsuz tünel döngüsü ---
+       İki halka 0.5 faz farkıyla ilerler; uçlarda opacity sıfırlandığı için
+       döngünün başladığı yer görünmez. */
+    ringT = (ringT + (0.055 + Math.abs(vel) * 0.0035) * dt * 3) % 1;
+    const drawRing = (el, phase) => {
+      const t = (ringT + phase) % 1;
+      const scale = 0.35 + t * 2.35;
+      const op = Math.sin(t * Math.PI) * 0.85;
+      el.style.transform = 'translate(-50%,-50%) scale(' + scale.toFixed(3) + ')';
+      el.style.opacity = op.toFixed(3);
+    };
+    if (ringA) drawRing(ringA, 0);
+    if (ringB) drawRing(ringB, 0.5);
+
+    /* --- Işınlar: yavaş dönüş + scroll ile yakınlaşma --- */
+    rayR += (0.9 + Math.abs(vel) * 0.05) * dt;
+    if (rays) {
+      rays.style.transform =
+        'rotate(' + rayR.toFixed(3) + 'deg) scale(' + (1 + p * 1.15).toFixed(3) + ')';
+    }
+
+    /* --- Merkezi glow: scroll ile nefes alır --- */
+    if (glow) {
+      const pulse = 0.55 + Math.sin(p * Math.PI * 2.2) * 0.25 + clamp(Math.abs(vel) * 0.012, 0, 0.35);
+      glow.style.opacity = pulse.toFixed(3);
+      glow.style.transform = 'scale(' + (0.85 + p * 0.9).toFixed(3) + ')';
+    }
+
+    /* --- Renk tonu: lacivert → mor → turkuaz --- */
+    if (tint) tint.style.opacity = (0.55 + p * 0.4).toFixed(3);
+  }
+
+  resize();
+  return { step, resize };
+}
+
+/* ==========================================================================
+   5. ANA rAF DÖNGÜSÜ
+   Progress bar, imleç, arka plan tüneli — hepsi tek döngüde.
+   Okuma (scrollY) ve yazma (style) ayrıldı; sekme gizliyken döngü durur.
+   ========================================================================== */
+function createLoop (tunnel, nav) {
+  const bar  = $('#progressBar');
+  const dot  = $('#cursorDot');
+  const ring = $('#cursorRing');
+
+  let last = performance.now();
+  let prevScroll = window.scrollY;
+  let vel = 0;               // yumuşatılmış scroll hızı
+  let running = true;
+
+  // İmleç hedef/geçerli konumları
+  const pointer = { tx: window.innerWidth / 2, ty: window.innerHeight / 2, x: 0, y: 0, rx: 0, ry: 0 };
+  let cursorOn = false;
+
+  if (!isCoarse && !reduceMotion && dot && ring) {
+    window.addEventListener('pointermove', e => {
+      pointer.tx = e.clientX; pointer.ty = e.clientY;
+      if (!cursorOn) {
+        cursorOn = true;
+        pointer.x = pointer.rx = e.clientX;
+        pointer.y = pointer.ry = e.clientY;
+        document.body.classList.add('cursor-ready');
+      }
+    }, { passive: true });
+
+    // Etkileşimli öğelerin üzerinde halka büyür
+    const HOT = 'a, button, input, select, textarea, .svc, .work-card, .stat';
+    document.addEventListener('pointerover', e => {
+      if (e.target.closest && e.target.closest(HOT)) ring.classList.add('is-hot');
+    });
+    document.addEventListener('pointerout', e => {
+      if (e.target.closest && e.target.closest(HOT)) ring.classList.remove('is-hot');
+    });
+  }
+
+  function frame (now) {
+    if (!running) return;
+    const dt = Math.min((now - last) / 1000, 0.05);   // sekme dönüşlerinde sıçramayı engelle
+    last = now;
+
+    /* --- Okuma --- */
+    const y = window.scrollY;
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const p = clamp(y / max, 0, 1);
+    vel = lerp(vel, y - prevScroll, 0.12);
+    prevScroll = y;
+
+    /* --- Yazma --- */
+    if (bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    if (nav) nav.classList.toggle('is-stuck', y > 40);
+
+    if (cursorOn) {
+      // Nokta hızlı takip eder, halka gecikmeli (lerp) izler
+      pointer.x = lerp(pointer.x, pointer.tx, 0.55);
+      pointer.y = lerp(pointer.y, pointer.ty, 0.55);
+      pointer.rx = lerp(pointer.rx, pointer.tx, 0.16);
+      pointer.ry = lerp(pointer.ry, pointer.ty, 0.16);
+      dot.style.transform  = 'translate3d(' + pointer.x.toFixed(1) + 'px,' + pointer.y.toFixed(1) + 'px,0)';
+      ring.style.transform = 'translate3d(' + pointer.rx.toFixed(1) + 'px,' + pointer.ry.toFixed(1) + 'px,0)';
+    }
+
+    tunnel.step(dt, p, vel);
+    requestAnimationFrame(frame);
+  }
+
+  // Sekme arkaplandayken boşuna kare üretme
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { running = false; }
+    else if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+  });
+
+  // Yeniden boyutlandırma (debounce'lu)
+  let rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => tunnel.resize(), 160);
+  }, { passive: true });
+
+  requestAnimationFrame(frame);
+}
+
+/* ==========================================================================
+   6. HERO GİRİŞ ANİMASYONU
+   ========================================================================== */
+function initHero () {
+  if (!hasGsap || reduceMotion) return;
+  const words = $$('.hero h1 .word > span');
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.15 });
+
+  tl.from('.hero .eyebrow', { y: 20, opacity: 0, duration: 0.7 })
+    .from(words, { yPercent: 115, duration: 1, stagger: 0.09 }, '-=0.35')
+    .from('.hero .lead', { y: 26, opacity: 0, duration: 0.8 }, '-=0.55')
+    .from('.hero-chips .chip', { y: 16, opacity: 0, duration: 0.5, stagger: 0.07 }, '-=0.45')
+    .from('.scroll-cue', { opacity: 0, duration: 0.6 }, '-=0.3');
+}
+
+/* ==========================================================================
+   7. GENEL SCROLL REVEAL
+   ========================================================================== */
+function initReveals () {
+  if (!hasGsap) return;
+  const items = $$('[data-reveal]');
+  if (reduceMotion) { gsap.set(items, { clearProps: 'all' }); return; }
+
+  items.forEach(el => {
+    gsap.from(el, {
+      y: 40, opacity: 0, duration: 0.85, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+    });
+  });
+}
+
+/* ==========================================================================
+   8. HİZMET KARTLARI — mouse pozisyonuna göre 3B tilt
+   quickTo ile pürüzsüz interpolasyon; sadece transform üzerinden çalışır.
+   ========================================================================== */
+function initTilt () {
+  if (!hasGsap || reduceMotion || isCoarse) return;
+  const MAX = 12;   // maksimum eğim (derece)
+
+  $$('[data-tilt]').forEach(card => {
+    const rx = gsap.quickTo(card, 'rotateX', { duration: 0.5, ease: 'power2.out' });
+    const ry = gsap.quickTo(card, 'rotateY', { duration: 0.5, ease: 'power2.out' });
+    const ty = gsap.quickTo(card, 'y',       { duration: 0.5, ease: 'power2.out' });
+
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      rx(-(py - 0.5) * MAX * 2);
+      ry((px - 0.5) * MAX * 2);
+      ty(-6);
+      // Parlama noktasını imlecin altına taşı
+      card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+    }, { passive: true });
+
+    card.addEventListener('pointerleave', () => { rx(0); ry(0); ty(0); });
+  });
+}
+
+/* ==========================================================================
+   9. ANA 3B SCROLL SAHNESİ  ★ sitenin kalbi
+   ------------------------------------------------------------------------
+   Zaman çizelgesi normalize birimlerle kurulur:
+     STEP  = kartlar arası mesafe          (1.0)
+     ENTER = uzaktan merkeze geliş süresi  (0.8)
+     HOLD  = merkezde bekleme              (0.25)
+     EXIT  = izleyiciye doğru çıkış        (0.85)
+   Kart ömrü (1.9) > adım (1.0) olduğu için kartlar üst üste biner:
+   bir kart daha tam çıkmadan diğeri belirmeye başlar.
+   ========================================================================== */
+function initWorkScene () {
+  if (!hasGsap) return;
+
+  const section = $('#work');
+  const cards   = $$('.work-card', section);
+  const infos   = $$('.work-info', section);
+  const head    = $('.work-head', section);
+  if (!section || !cards.length) return;
+
+  const mm = gsap.matchMedia();
+
+  /* ---------------------------------------------------------------------
+     9.A — MASAÜSTÜ: tam 3B pinned sahne
+     --------------------------------------------------------------------- */
+  mm.add('(min-width: 1000px) and (prefers-reduced-motion: no-preference)', () => {
+    const STEP = 1, ENTER = 0.8, HOLD = 0.25, EXIT = 0.85, LEAD = 0.35;
+    const vw = f => window.innerWidth * f;
+    const vh = f => window.innerHeight * f;
+
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        // Sabitleme işini CSS `position:sticky` yapıyor; ScrollTrigger sadece scrub eder.
+        scrub: 0.7,
+        invalidateOnRefresh: true  // fonksiyon değerleri resize'da yeniden hesaplanır
+      }
+    });
+
+    /* BÖLÜM BAŞLIĞI — ilk kart yukarı süzülürken onunla birlikte yukarı çıkıp
+       kaybolur. Kartın çıkışıyla aynı anda ve aynı ease ('none') ile başlar ki
+       ikisi tek bir hareket gibi okunsun. */
+    tl.to(head, {
+      y: () => -vh(0.42),
+      opacity: 0,
+      duration: EXIT * 0.9,
+      ease: 'none'
+    }, LEAD + ENTER + HOLD);
+
+    cards.forEach((card, i) => {
+      const dir  = i % 2 === 0 ? 1 : -1;   // +1 = sağdan gelir, -1 = soldan gelir
+      const info = infos[i];
+      const at   = LEAD + i * STEP;
+      const inner = $('.work-card-inner', card);
+
+      // Merkezleme: xPercent/yPercent, GSAP'in kendi transform hesabıyla birleşir
+      gsap.set(card, { xPercent: -50, yPercent: -50, transformOrigin: '50% 50%' });
+      gsap.set(info, { yPercent: -50 });
+
+      tl
+        /* GİRİŞ — derinden ve AŞAĞIDAN, yanlardan birinden.
+           Dikey bileşen her kartta aynı yönde (aşağıdan yukarı) ilerler; sayfayı
+           aşağı kaydırma hissini süren şey bu. Yatay bileşen ise sırayla değişir:
+           sağ alt → sol alt → sağ alt …
+           Not: y/x değerleri perspektif küçültmesini telafi edecek şekilde
+           büyük seçildi — z:-1500'de görünür ölçek 1200/2700 ≈ 0.44'e düşüyor. */
+        .fromTo(card, {
+          x: () => dir * vw(0.75),
+          y: () => vh(0.95),     // merkezin ALTINDA başlar
+          z: -1500,
+          rotateY: -35 * dir,
+          rotateX: -14,          // aşağıdan yükselirken öne devriliyormuş gibi
+          scale: 0.85,
+          opacity: 0
+        }, {
+          x: 0, y: 0, z: 0,
+          rotateY: -8 * dir,     // tam düzleşmiyor: hafif 3B his korunuyor
+          rotateX: 0,
+          scale: 1,
+          opacity: 1,
+          duration: ENTER,
+          ease: 'power2.out'
+        }, at)
+
+        /* ÇIKIŞ — geldiği YANDAN ama YUKARI doğru: sağdan gelen sağ üste,
+           soldan gelen sol üste süzülür. Böylece kart hiçbir zaman geri
+           dönmüyor; akış hep yukarı, yani kaydırma yönünün tersine.
+           ease:'none' bilinçli: 3B uzayda doğrusal hareket, perspektif
+           sayesinde ekranda zaten hızlanarak görünür — ek ivme gereksiz ve
+           kartın görünürken yol almasını engelliyordu. */
+        .to(card, {
+          x: () => dir * vw(0.3),
+          y: () => -vh(0.42),    // merkezin ÜSTÜNE çıkar
+          z: 600,                // perspektif 1200 ile ~2x görünür büyüme
+          rotateY: -50 * dir,    // açı yeniden artıyor
+          rotateX: 14,           // devrilme girişteki açıdan devam eder
+          duration: EXIT,
+          ease: 'none'
+        }, at + ENTER + HOLD)
+
+        /* Opaklık transformdan biraz önce biter: kart en uç (en büyük)
+           konumuna ulaştığında tamamen şeffaftır, o dev katman hiç boyanmaz. */
+        .to(card, {
+          opacity: 0,
+          duration: EXIT * 0.9,
+          ease: 'none'
+        }, at + ENTER + HOLD)
+
+        /* Çıkan kart, gelen kartın önünde kalsın */
+        .set(card, { zIndex: 30 }, at + ENTER + HOLD)
+        .set(card, { zIndex: 1  }, at + ENTER + HOLD + EXIT)
+
+        /* METİN — kart merkeze yaklaşırken belirir, çıkarken kaybolur */
+        .fromTo(info,
+          { opacity: 0, y: 46 },
+          { opacity: 1, y: 0, duration: 0.42, ease: 'power2.out' },
+          at + ENTER * 0.6)
+        .to(info,
+          { opacity: 0, y: -42, duration: 0.34, ease: 'power2.in' },
+          at + ENTER + HOLD + 0.1);
+
+      /* FLOAT — kart merkezdeyken yavaş süzülme.
+         Scrub'lanan transform'la çakışmaması için iç sarmalayıcıda çalışır. */
+      if (inner) {
+        gsap.to(inner, {
+          y: -15,
+          duration: 2.8 + i * 0.15,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: i * 0.25
+        });
+      }
+    });
+
+    // Son kart tamamen çıktıktan sonra kısa bir nefes payı
+    tl.to({}, { duration: 0.45 });
+
+    return () => {
+      // matchMedia bağlamı kapanırken tüm tween'ler geri alınır
+      // Hedefli temizlik: 'all' demek, GSAP'in yazmadığı yazar stillerini
+      // (örn. özel değişkenleri) de silmek anlamına gelirdi.
+      gsap.set([cards, infos, head], { clearProps: 'transform,opacity,zIndex' });
+    };
+  });
+
+  /* ---------------------------------------------------------------------
+     9.B — MOBİL / DAR EKRAN: 3B kapalı, hafif dikey akış
+     --------------------------------------------------------------------- */
+  mm.add('(max-width: 999px) and (prefers-reduced-motion: no-preference)', () => {
+    cards.forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 56, scale: 0.96 },
+        {
+          opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power2.out',
+          scrollTrigger: { trigger: card, start: 'top 86%', once: true }
+        });
+      gsap.fromTo(infos[i],
+        { opacity: 0, y: 26 },
+        {
+          opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+          scrollTrigger: { trigger: infos[i], start: 'top 92%', once: true }
+        });
+    });
+    return () => { // Hedefli temizlik: 'all' demek, GSAP'in yazmadığı yazar stillerini
+      // (örn. özel değişkenleri) de silmek anlamına gelirdi.
+      gsap.set([cards, infos, head], { clearProps: 'transform,opacity,zIndex' }); };
+  });
+
+  /* ---------------------------------------------------------------------
+     9.C — HAREKET AZALTMA: animasyon yok, içerik doğrudan görünür
+     --------------------------------------------------------------------- */
+  mm.add('(prefers-reduced-motion: reduce)', () => {
+    gsap.set([cards, infos, head], { opacity: 1, clearProps: 'transform' });
+  });
+}
+
+/* ==========================================================================
+   10. SÜREÇ — adımlar soldan gelir, aradaki çizgi scroll ile dolar
+   ========================================================================== */
+function initProcess () {
+  if (!hasGsap) return;
+  const steps = $$('#proc .step');
+  const line  = $('#procLine');
+  if (!steps.length) return;
+
+  if (reduceMotion) {
+    if (line) gsap.set(line, { scaleY: 1 });
+    steps.forEach(s => s.classList.add('is-active'));
+    return;
+  }
+
+  // İlerleyen çizgi
+  if (line) {
+    gsap.fromTo(line, { scaleY: 0 }, {
+      scaleY: 1, ease: 'none',
+      scrollTrigger: { trigger: '#proc', start: 'top 72%', end: 'bottom 78%', scrub: 0.5 }
+    });
+  }
+
+  // Adımlar sırayla soldan
+  steps.forEach(step => {
+    gsap.from(step, {
+      x: -56, opacity: 0, duration: 0.75, ease: 'power2.out',
+      scrollTrigger: {
+        trigger: step, start: 'top 82%', once: true,
+        onEnter: () => step.classList.add('is-active')
+      }
+    });
+  });
+}
+
+/* ==========================================================================
+   11. İLETİŞİM FORMU — istemci tarafı doğrulama
+   ========================================================================== */
+function initForm () {
+  const form   = $('#contactForm');
+  const status = $('#formStatus');
+  if (!form) return;
+
+  const RULES = {
+    fName: v => v.trim().length >= 2      || 'Lütfen adını ve soyadını yaz.',
+    fMail: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || 'Geçerli bir e-posta adresi gir.',
+    fType: v => v !== ''                  || 'Bir proje türü seç.',
+    fMsg:  v => v.trim().length >= 10     || 'Birkaç cümleyle projeni anlatır mısın?'
+  };
+
+  function validate (id) {
+    const el    = $('#' + id);
+    const field = el.closest('.field');
+    const err   = $('[data-err-for="' + id + '"]', form);
+    const res   = RULES[id](el.value);
+    const ok    = res === true;
+
+    field.classList.toggle('has-error', !ok);
+    el.setAttribute('aria-invalid', String(!ok));
+    if (err) err.textContent = ok ? '' : res;
+    return ok;
+  }
+
+  Object.keys(RULES).forEach(id => {
+    const el = $('#' + id);
+    el.addEventListener('blur', () => validate(id));
+    el.addEventListener('input', () => {
+      if (el.closest('.field').classList.contains('has-error')) validate(id);
+    });
+  });
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const allOk = Object.keys(RULES).map(validate).every(Boolean);
+
+    if (!allOk) {
+      status.className = 'form-status';
+      status.textContent = 'Lütfen işaretli alanları kontrol et.';
+      const firstBad = $('.field.has-error input, .field.has-error select, .field.has-error textarea', form);
+      if (firstBad) firstBad.focus();
+      return;
+    }
+
+    const btn = $('button[type="submit"]', form);
+    btn.disabled = true;
+    status.className = 'form-status';
+    status.textContent = 'Gönderiliyor…';
+
+    try {
+      // Gerçek bir uç nokta tanımlıysa oraya gönder, değilse yerel onay göster.
+      if (CONFIG.formEndpoint) {
+        const res = await fetch(CONFIG.formEndpoint, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        if (!res.ok) throw new Error('İstek başarısız');
+      }
+      form.reset();
+      status.className = 'form-status is-ok';
+      status.textContent = 'Teşekkürler! Mesajın bize ulaştı, 24 saat içinde döneceğiz.';
+      if (hasGsap && !reduceMotion) gsap.from(status, { y: 10, opacity: 0, duration: 0.45 });
+    } catch (err) {
+      status.className = 'form-status';
+      status.textContent = 'Gönderilemedi. Dilersen doğrudan ' + CONFIG.email + ' adresine yazabilirsin.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+/* ==========================================================================
+   13. BAŞLATMA
+   ========================================================================== */
+function init () {
+  applyConfig();
+  watchMode();
+  const nav = initNav();
+
+  const tunnel = createTunnel();
+  createLoop(tunnel, nav);
+
+  initHero();
+  initReveals();
+  initTilt();
+  initWorkScene();
+  initProcess();
+  initForm();
+
+  // Fontlar yüklendikten sonra ölçüler değişebilir → tetikleyicileri tazele
+  if (hasGsap && document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+  }
+  window.addEventListener('load', () => { if (hasGsap) ScrollTrigger.refresh(); });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+})();
+</script>
+</body>
+</html>
