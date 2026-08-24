@@ -860,15 +860,6 @@ html.no-gsap .work-info{ opacity:1; }
   transform:translateX(7px); border-color:rgba(var(--cyan-rgb),.45);
   box-shadow:0 18px 40px -22px rgba(var(--cyan-rgb),.9);
 }
-/* Henüz hazır olmayan kanal: href'i silindiği için zaten tıklanamaz,
-   burada görsel olarak da pasif gösteriliyor. */
-a.is-pending{ cursor:default; }
-.social a.is-pending{ opacity:.6; }
-.social a.is-pending:hover{
-  transform:none; border-color:var(--line); box-shadow:none;
-}
-.social a.is-pending .ic{ filter:grayscale(.6); }
-.footer-bottom a.is-pending{ color:var(--muted); }
 .social .ic{
   width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
   background:var(--grad); flex:none;
@@ -1280,18 +1271,21 @@ a.is-pending{ cursor:default; }
             <span><b>WhatsApp</b><span data-phone>+90 555 555 55 55</span></span>
           </a>
 
-          <a class="is-pending">
+          <!-- E-posta: CONFIG.email boş olduğu sürece gizli kalır.
+               Adres yazıldığında JS bu kartı görünür yapıp mailto: bağlar. -->
+          <a data-channel hidden target="_blank" rel="noopener">
             <span class="ic" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1m1.6 2L12 12.3 19.4 7z"/></svg>
             </span>
-            <span><b>E-posta</b><span data-email>Yapım aşamasında</span></span>
+            <span><b>E-posta</b><span data-email></span></span>
           </a>
 
-          <a class="is-pending">
+          <!-- Instagram: CONFIG.instagram boş olduğu sürece gizli. -->
+          <a data-channel hidden target="_blank" rel="noopener">
             <span class="ic" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9A5.5 5.5 0 0 1 16.5 22h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2m0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6m5.8-3.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4"/></svg>
             </span>
-            <span><b>Instagram</b><span data-social>Yapım aşamasında</span></span>
+            <span><b>Instagram</b><span data-social></span></span>
           </a>
         </div>
       </div>
@@ -1399,7 +1393,7 @@ a.is-pending{ cursor:default; }
     </div>
     <div class="footer-bottom">
       <span>© <span id="year">2026</span> <span data-brand>PIXELFORM</span>. Tüm hakları saklıdır.</span>
-      <span>İstanbul, Türkiye · <a class="is-pending" data-email>Yapım aşamasında</a></span>
+      <span>İstanbul, Türkiye<span data-channel hidden> · <a data-email></a></span></span>
     </div>
   </div>
 </footer>
@@ -1423,12 +1417,11 @@ const CONFIG = {
   brand:        'PIXELFORM',
   phone:        '+90 546 620 42 64',
 
-  // E-posta ve Instagram henüz hazır değil. BOŞ bırakıldıkları sürece sayfada
-  // pendingLabel yazar ve bağlantıları devre dışı kalır. Hazır olduklarında
-  // buraya yazman yeterli — metin ve tıklanabilir link kendiliğinden geri gelir.
-  email:        '',                 // örn. 'merhaba@pixelform.com'
+  // E-posta ve Instagram henüz hazır değil. BOŞ bırakıldıkları sürece o kanallar
+  // sayfada HİÇ GÖRÜNMEZ (kart tamamen gizlenir). Hazır olduklarında buraya
+  // yazman yeterli — kart, metin ve tıklanabilir bağlantı kendiliğinden gelir.
+  email:        '',                 // örn. 'merhaba@pixelform.net'
   instagram:    '',                 // örn. '@pixelform'
-  pendingLabel: 'Yapım aşamasında',
 
   // İletişim bölümünde hangi panelin görüneceği:
   //   'whatsapp' → WhatsApp yönlendirme kartı  (şu an aktif)
@@ -1461,27 +1454,20 @@ const lerp  = (a, b, t) => a + (b - a) * t;
 function applyConfig () {
   $$('[data-brand]').forEach(el => { el.textContent = CONFIG.brand; });
 
-  /* Bir iletişim kanalını yaz. CONFIG'deki değer boşsa kanal "hazır değil"
-     sayılır: metin yerine pendingLabel yazılır ve sarmalayan bağlantı devre
-     dışı bırakılır (href silinince <a> tıklanamaz ve odaklanamaz olur).
-     Böylece kimse boş bir mail penceresine ya da olmayan bir profile düşmez. */
+  /* Bir iletişim kanalını yaz. CONFIG'deki değer boşsa o kanal hazır değil
+     demektir: [data-channel] kabı [hidden] yapılır, yani karttan hiç iz kalmaz
+     (düzenden de erişilebilirlik ağacından da çıkar). Değer yazıldığı anda kart
+     görünür olur ve bağlantısı kurulur — markup'ı silmeye gerek yok. */
   const kanal = (selector, value, buildHref) => {
     $$(selector).forEach(el => {
-      const link = el.closest('a');   // hem <a data-x> hem <a><span data-x></span> için çalışır
+      const kutu = el.closest('[data-channel]') || el;  // gizlenecek kap
+      const link = el.closest('a');                     // href yazılacak bağlantı
       if (value) {
         el.textContent = value;
-        if (link) {
-          link.href = buildHref(value);
-          link.classList.remove('is-pending');
-        }
+        if (link) link.href = buildHref(value);
+        kutu.hidden = false;
       } else {
-        el.textContent = CONFIG.pendingLabel;
-        if (link) {
-          link.removeAttribute('href');
-          link.removeAttribute('target');
-          link.removeAttribute('rel');
-          link.classList.add('is-pending');
-        }
+        kutu.hidden = true;   // kanal hazır değil: hiç gösterme
       }
     });
   };
