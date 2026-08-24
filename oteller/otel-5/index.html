@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Kumsal Otel — Sinop. Şafaktan geceye, kıyıda bir gün." />
+  <title>Kumsal Otel — Kıyıda bir gün</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ YAŞAYAN SAHNE ============ -->
+  <div class="scene" aria-hidden="true">
+    <div class="sky" id="sky"></div>
+    <div class="stars" id="stars"></div>
+    <div class="clouds" id="clouds">
+      <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+    </div>
+    <div class="reflect" id="reflect"></div>
+    <div class="sun" id="sun"></div>
+    <div class="moon" id="moon"></div>
+    <div class="sea">
+      <svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,50 C240,110 480,0 720,50 C960,100 1200,10 1440,55 L1440,120 L0,120 Z"/></svg>
+    </div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <header class="topbar">
+    <a href="#p-hero" class="brand">Kumsal<span>°</span></a>
+    <div class="clock"><span class="clock-ic" id="clockIc">☀</span><span id="clock">06:00</span><span class="clock-lbl" id="clockLbl">Şafak</span></div>
+    <div class="top-actions">
+      <button class="ico" id="themeToggle" aria-label="Kart teması"><span class="t-sun">☀</span><span class="t-moon">☾</span></button>
+      <a href="#p-gece" class="pill hide-sm">Rezervasyon</a>
+      <button class="ico burger" id="menuBtn" aria-label="Menü"><span></span><span></span></button>
+    </div>
+  </header>
+  <nav class="drop" id="drop">
+    <a href="#p-sabah">Kahvaltı</a><a href="#p-oglen">Deniz &amp; Havuz</a><a href="#p-batim">Gün Batımı</a><a href="#p-odalar">Odalar</a><a href="#p-gece">Rezervasyon</a>
+  </nav>
+
+  <main>
+
+    <!-- 06:00 · ŞAFAK -->
+    <section class="chapter" id="p-hero">
+      <div class="card hero-card reveal">
+        <span class="tchip">◔ 06:00 · Şafak</span>
+        <h1 class="hero-h">Güneş<br />denizden<br /><em>doğuyor.</em></h1>
+        <p class="hero-p">Kumsal Otel'de bir gün başlıyor. Aşağı kaydır — sabahtan geceye bizimle yolculuk et.</p>
+        <div class="hero-cta">
+          <a href="#p-gece" class="pill big">Rezervasyon Yap</a>
+          <a href="#p-sabah" class="pill big line">Güne Başla ↓</a>
+        </div>
+      </div>
+      <span class="scrollhint">↓ günü başlat</span>
+    </section>
+
+    <!-- 09:00 · SABAH -->
+    <section class="chapter" id="p-sabah">
+      <div class="split">
+        <div class="card reveal">
+          <span class="tchip">◕ 09:00 · Sabah</span>
+          <h2 class="h2">Deniz esintili<br />bir kahvaltı.</h2>
+          <p>Yerel peynirler, taze reçeller, sıcak simit ve denize karşı demli çay. Güne Karadeniz usulü başla.</p>
+          <div class="mini-chips"><span>🍯 Serpme kahvaltı</span><span>🫖 Sınırsız çay</span><span>🌿 Yerel ürünler</span></div>
+        </div>
+        <figure class="photo reveal"><img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=900&q=80" alt="Kahvaltı" loading="lazy" /></figure>
+      </div>
+    </section>
+
+    <!-- 13:00 · ÖĞLEN -->
+    <section class="chapter" id="p-oglen">
+      <div class="split reverse">
+        <div class="card reveal">
+          <span class="tchip">☀ 13:00 · Öğlen</span>
+          <h2 class="h2">Deniz, havuz,<br />bol güneş.</h2>
+          <p>Özel plaj, sonsuzluk havuzu ve şezlonglar. Serinle, yüz, hiçbir şey yapma.</p>
+          <div class="mini-chips"><span>🌊 Özel Plaj</span><span>💧 Havuz</span><span>🏖️ Şezlong</span><span>📶 Wi-Fi</span></div>
+        </div>
+        <figure class="photo reveal"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80" alt="Havuz manzara" loading="lazy" /></figure>
+      </div>
+    </section>
+
+    <!-- 19:00 · GÜN BATIMI -->
+    <section class="chapter" id="p-batim">
+      <div class="card wide reveal">
+        <span class="tchip">◒ 19:00 · Gün Batımı</span>
+        <h2 class="h2 center">Altın saat başlıyor.</h2>
+        <p class="center">Sahil barında imza kokteyller, canlı müzik ve gökyüzünün en güzel hâli.</p>
+        <div class="mini-chips center"><span>🍹 Sahil Bar</span><span>🎶 Canlı Müzik</span><span>🌅 Manzara</span></div>
+      </div>
+    </section>
+
+    <!-- 21:00 · ODALAR -->
+    <section class="chapter" id="p-odalar">
+      <div class="col">
+        <div class="sec-head reveal"><span class="tchip">◗ 21:00 · Akşam</span><h2 class="h2">İyi geceler için odalar</h2></div>
+        <div class="rooms">
+          <article class="room card reveal"><figure><img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=700&q=80" alt="Deniz Odası" loading="lazy" /></figure><h3>Deniz Odası</h3><span class="price">₺2.400<i>/gece</i></span></article>
+          <article class="room card reveal"><figure><img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=700&q=80" alt="Deluxe Suite" loading="lazy" /></figure><h3>Deluxe Suite</h3><span class="price">₺3.900<i>/gece</i></span></article>
+          <article class="room card reveal"><figure><img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=700&q=80" alt="Panorama Suite" loading="lazy" /></figure><h3>Panorama Suite</h3><span class="price">₺5.600<i>/gece</i></span></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23:00 · GECE -->
+    <section class="chapter" id="p-gece">
+      <div class="split">
+        <div class="card reveal">
+          <span class="tchip">☾ 23:00 · Gece</span>
+          <h2 class="h2">Yıldızların<br />altında ayırt.</h2>
+          <p>Tarihini seç, WhatsApp'tan anında yanıt al. Yarın yeni bir gün, yeni bir şafak.</p>
+          <ul class="contact">
+            <li>📍 Sahil Cad. No:12, Sinop</li>
+            <li>📞 <a href="tel:+905555555555">+90 555 555 55 55</a></li>
+            <li>✉️ <a href="mailto:info@kumsalotel.com">info@kumsalotel.com</a></li>
+          </ul>
+        </div>
+        <form class="card res-form reveal" id="resForm" novalidate>
+          <div class="rf date-field" id="btnIn" tabindex="0" role="button" aria-label="Giriş tarihi seç">
+            <span class="rf-label">Giriş</span><span class="rf-value date-value" id="valIn">Tarih seç</span>
+            <input type="date" id="fIn" name="checkin" required />
+          </div>
+          <div class="rf date-field" id="btnOut" tabindex="0" role="button" aria-label="Çıkış tarihi seç">
+            <span class="rf-label">Çıkış</span><span class="rf-value date-value" id="valOut">Tarih seç</span>
+            <input type="date" id="fOut" name="checkout" required />
+          </div>
+          <div class="rf">
+            <span class="rf-label">Misafir</span>
+            <select id="fGuests" name="guests" aria-label="Kişi sayısı">
+              <option value="1">1 kişi</option><option value="2" selected>2 kişi</option>
+              <option value="3">3 kişi</option><option value="4">4 kişi</option>
+              <option value="5">5 kişi</option><option value="6">6+ kişi</option>
+            </select>
+          </div>
+          <button type="submit" class="wa-btn">WhatsApp'tan Sor →</button>
+          <p class="res-note" id="resNote" hidden></p>
+        </form>
+      </div>
+      <footer class="footer"><span class="brand">Kumsal<span>°</span></span> · © 2026 · Sinop, Türkiye</footer>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

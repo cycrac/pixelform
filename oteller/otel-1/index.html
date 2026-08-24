@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Kumsal Otel — Sinop'un huzurlu kıyısında modern ve minimalist bir kaçış. Deniz manzaralı odalar, huzur ve zarafet." />
+  <title>Kumsal Otel · Sinop</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ HEADER / NAV ============ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="#hero" class="brand">
+        <span class="brand-mark">◈</span>
+        <span class="brand-name">KUMSAL<span class="brand-thin">OTEL</span></span>
+      </a>
+
+      <nav class="nav" id="mainNav" aria-label="Ana menü">
+        <a href="#hakkimizda" class="nav-link">Hakkımızda</a>
+        <a href="#odalar" class="nav-link">Odalar</a>
+        <a href="#olanaklar" class="nav-link">Olanaklar</a>
+        <a href="#galeri" class="nav-link">Galeri</a>
+        <a href="#iletisim" class="nav-link">İletişim</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Gece / Gündüz modu" title="Gece / Gündüz modu">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>
+        </button>
+
+        <button class="menu-btn" id="menuBtn" aria-label="Menüyü aç" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <p class="hero-eyebrow">SİNOP · KARADENİZ</p>
+        <h1 class="hero-title">Kıyıda huzur,<br />zarafette denge.</h1>
+        <p class="hero-sub">Karadeniz'in sakin mavisiyle buluşan modern bir kaçış. Kumsal Otel'de her detay dinginlik için tasarlandı.</p>
+        <div class="hero-cta">
+          <a href="#rezervasyon" class="btn btn-primary">Rezervasyon Yap</a>
+          <a href="#odalar" class="btn btn-ghost">Odaları Keşfet</a>
+        </div>
+      </div>
+      <a href="#hakkimizda" class="scroll-hint" aria-label="Aşağı kaydır">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- ============ HAKKIMIZDA ============ -->
+    <section class="section" id="hakkimizda">
+      <div class="container about-grid">
+        <div class="about-media reveal">
+          <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80" alt="Kumsal Otel iç mekan" loading="lazy" />
+        </div>
+        <div class="about-text reveal">
+          <p class="eyebrow">Hakkımızda</p>
+          <h2 class="section-title">Sadeliğin en zarif hali.</h2>
+          <p class="lead">Kumsal Otel, Sinop'un tarihi dokusuyla Karadeniz'in dinginliğini birleştiren, sıcak ve minimalist bir konaklama deneyimi sunar.</p>
+          <p>Doğal malzemeler, geniş pencereler ve sakin renk paletiyle tasarlanan mekanlarımızda; her sabah deniz esintisiyle uyanır, her akşam gün batımının huzuruyla dinlenirsiniz. Az ama öz — gerçek konforun tanımı.</p>
+          <div class="stats">
+            <div class="stat"><span class="stat-num">24</span><span class="stat-label">Deniz Manzaralı Oda</span></div>
+            <div class="stat"><span class="stat-num">4.9</span><span class="stat-label">Misafir Puanı</span></div>
+            <div class="stat"><span class="stat-num">120m</span><span class="stat-label">Sahile Mesafe</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ODALAR ============ -->
+    <section class="section section-alt" id="odalar">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Odalar &amp; Suitler</p>
+          <h2 class="section-title">Dinlenmenin farklı tonları</h2>
+        </div>
+
+        <div class="rooms-grid">
+          <article class="room-card reveal">
+            <div class="room-img">
+              <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1000&q=80" alt="Standart Deniz Odası" loading="lazy" />
+            </div>
+            <div class="room-body">
+              <h3 class="room-name">Deniz Odası</h3>
+              <p class="room-desc">Ferah, sade ve deniz manzaralı. Çift kişilik konfor.</p>
+              <div class="room-foot">
+                <span class="room-price">₺2.400<small>/gece</small></span>
+                <a href="#rezervasyon" class="room-link">Ayrıntı →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="room-card reveal">
+            <div class="room-img">
+              <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1000&q=80" alt="Deluxe Suite" loading="lazy" />
+            </div>
+            <div class="room-body">
+              <h3 class="room-name">Deluxe Suite</h3>
+              <p class="room-desc">Geniş oturma alanı ve özel balkonla üst düzey konfor.</p>
+              <div class="room-foot">
+                <span class="room-price">₺3.900<small>/gece</small></span>
+                <a href="#rezervasyon" class="room-link">Ayrıntı →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="room-card reveal">
+            <div class="room-img">
+              <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1000&q=80" alt="Panorama Suite" loading="lazy" />
+            </div>
+            <div class="room-body">
+              <h3 class="room-name">Panorama Suite</h3>
+              <p class="room-desc">180° deniz manzarası, jakuzi ve premium ayrıcalıklar.</p>
+              <div class="room-foot">
+                <span class="room-price">₺5.600<small>/gece</small></span>
+                <a href="#rezervasyon" class="room-link">Ayrıntı →</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OLANAKLAR ============ -->
+    <section class="section" id="olanaklar">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Olanaklar</p>
+          <h2 class="section-title">Her şey düşünüldü</h2>
+        </div>
+        <div class="amenities">
+          <div class="amenity reveal">
+            <div class="amenity-icon">🌊</div>
+            <h3>Özel Plaj</h3>
+            <p>Otele ait düzenlenmiş sakin kumsal ve şezlong alanı.</p>
+          </div>
+          <div class="amenity reveal">
+            <div class="amenity-icon">🍽️</div>
+            <h3>Sahil Restoran</h3>
+            <p>Taze Karadeniz lezzetleri ve mevsim mutfağı.</p>
+          </div>
+          <div class="amenity reveal">
+            <div class="amenity-icon">🧖</div>
+            <h3>Spa &amp; Wellness</h3>
+            <p>Sauna, masaj ve dinlenme ritüelleriyle tam huzur.</p>
+          </div>
+          <div class="amenity reveal">
+            <div class="amenity-icon">☕</div>
+            <h3>Kahvaltı</h3>
+            <p>Yerel ürünlerle hazırlanan zengin serpme kahvaltı.</p>
+          </div>
+          <div class="amenity reveal">
+            <div class="amenity-icon">🚗</div>
+            <h3>Ücretsiz Otopark</h3>
+            <p>Güvenli, kapalı ve otele özel park alanı.</p>
+          </div>
+          <div class="amenity reveal">
+            <div class="amenity-icon">📶</div>
+            <h3>Hızlı Wi-Fi</h3>
+            <p>Tüm alanlarda kesintisiz, yüksek hızlı internet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALERİ ============ -->
+    <section class="section section-alt" id="galeri">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Galeri</p>
+          <h2 class="section-title">Bir bakışta Kumsal</h2>
+        </div>
+        <div class="gallery">
+          <figure class="g-item g-tall reveal"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=80" alt="Otel dış görünüm" loading="lazy" /></figure>
+          <figure class="g-item reveal"><img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=900&q=80" alt="Havuz" loading="lazy" /></figure>
+          <figure class="g-item reveal"><img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=900&q=80" alt="Oda detay" loading="lazy" /></figure>
+          <figure class="g-item g-wide reveal"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=80" alt="Restoran" loading="lazy" /></figure>
+          <figure class="g-item reveal"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80" alt="Manzara" loading="lazy" /></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REZERVASYON ============ -->
+    <section class="section reservation" id="rezervasyon">
+      <div class="container res-wrap reveal">
+        <div class="res-intro">
+          <p class="eyebrow">Rezervasyon</p>
+          <h2 class="section-title">Yeriniz sizi bekliyor</h2>
+          <p class="lead">Tarihlerinizi ve kişi sayınızı seçin, WhatsApp üzerinden anında bilgi alın.</p>
+        </div>
+        <form class="res-form" id="resForm" novalidate>
+          <div class="field-row">
+            <!-- Tıklanabilir modern tarih alanı: Giriş -->
+            <div class="date-field" id="btnIn" tabindex="0" role="button" aria-label="Giriş tarihi seç">
+              <svg class="date-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="date-meta">
+                <span class="date-label">Giriş</span>
+                <span class="date-value" id="valIn">Tarih seçin</span>
+              </span>
+              <input type="date" id="fIn" name="checkin" required />
+            </div>
+            <!-- Tıklanabilir modern tarih alanı: Çıkış -->
+            <div class="date-field" id="btnOut" tabindex="0" role="button" aria-label="Çıkış tarihi seç">
+              <svg class="date-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+              <span class="date-meta">
+                <span class="date-label">Çıkış</span>
+                <span class="date-value" id="valOut">Tarih seçin</span>
+              </span>
+              <input type="date" id="fOut" name="checkout" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="fGuests">Kişi Sayısı</label>
+            <select id="fGuests" name="guests">
+              <option value="1">1 Misafir</option>
+              <option value="2" selected>2 Misafir</option>
+              <option value="3">3 Misafir</option>
+              <option value="4">4 Misafir</option>
+              <option value="5">5 Misafir</option>
+              <option value="6">6+ Misafir</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-whatsapp btn-block">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.75-.86-2-.96-.27-.1-.46-.15-.65.15-.2.3-.75.96-.92 1.16-.17.2-.34.22-.63.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.34.44-.5.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.65-1.58-.9-2.16-.24-.57-.48-.5-.65-.5l-.56-.01c-.2 0-.5.07-.77.37-.26.3-1 .98-1 2.4s1.03 2.78 1.17 2.97c.15.2 2.02 3.08 4.9 4.32.68.3 1.22.47 1.63.6.69.22 1.31.19 1.8.11.55-.08 1.75-.71 2-1.4.24-.7.24-1.28.17-1.4-.07-.13-.26-.2-.55-.35zM12 2a10 10 0 0 0-8.6 15.06L2 22l5.06-1.33A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3 .79.8-2.92-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>
+            WhatsApp'tan Bilgi Al
+          </button>
+          <p class="res-note" id="resNote" hidden>WhatsApp'a yönlendiriliyorsunuz...</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer" id="iletisim">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <span class="brand-name">KUMSAL<span class="brand-thin">OTEL</span></span>
+        <p>Sinop'un huzurlu kıyısında modern konaklama.</p>
+      </div>
+      <div class="footer-col">
+        <h4>İletişim</h4>
+        <p>Sahil Cad. No:12, Sinop</p>
+        <p><a href="tel:+903682000000">+90 368 200 00 00</a></p>
+        <p><a href="mailto:info@kumsalotel.com">info@kumsalotel.com</a></p>
+      </div>
+      <div class="footer-col">
+        <h4>Menü</h4>
+        <a href="#odalar">Odalar</a>
+        <a href="#olanaklar">Olanaklar</a>
+        <a href="#galeri">Galeri</a>
+        <a href="#rezervasyon">Rezervasyon</a>
+      </div>
+      <div class="footer-col">
+        <h4>Takip Et</h4>
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+        <a href="#">X / Twitter</a>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2026 Kumsal Otel · Sinop, Türkiye</p>
+      <p>Tüm hakları saklıdır.</p>
+    </div>
+  </footer>
+
+  <!-- Her zaman görünür rezervasyon butonu (mobil) -->
+  <a href="#rezervasyon" class="floating-book" aria-label="Rezervasyon yap">
+    <span class="fb-text">Rezervasyon</span>
+  </a>
+
+  <script src="script.js"></script>
+</body>
+</html>
