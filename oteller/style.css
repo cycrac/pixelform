@@ -404,7 +404,10 @@ body.scrolling .screen iframe { pointer-events: none; }
 /* ---------- mobil ---------- */
 @media (max-width: 760px) {
   :root { --top-h: 54px; --bar-h: 100px; }
-  .seg { display: none; }
+  /* Masaüstü/Mobil düğmesi eskiden mobilde gizliydi çünkü işlevsizdi
+     (görünüm zorla mobile sabitleniyordu). Artık çalışıyor, o yüzden
+     görünür — ziyaretçi iki görünüm arasında geçiş yapabilsin. */
+  .seg { transform: scale(.88); transform-origin: center; }
   .wordmark { font-size: 15px; }
   .ghost span { display: none; }
   .ghost { padding: 8px; }

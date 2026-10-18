@@ -59,6 +59,14 @@
   var LOGICAL = { desktop: 1440, mobile: 390 };
   var ASPECT  = { desktop: 1440 / 900, mobile: 390 / 735 };
 
+  /* Telefonda masaüstü görünümü isteniyor. 1440px'i 375px'e sığdırmak 0.21
+     ölçek demek (16px yazı → 3.4px, okunmaz). Örnek sitelerin en büyük
+     kırılma noktası 900px olduğu için 960px'te hepsi hâlâ TAM masaüstü
+     düzenini gösteriyor, ama ölçek 0.38'e çıkıyor — yazı ~1.8 kat büyüyor.
+     En boy oranı dikey seçildi: telefon ekranı uzun, böylece sayfanın çok
+     daha fazlası görünür (yatay oranda ekranın yarısı boş kalıyordu). */
+  var NARROW_DESKTOP = { logical: 960, aspect: 960 / 1250 };
+
   var $ = function (s) { return document.querySelector(s); };
 
   var stage   = $("#stage");
@@ -150,11 +158,14 @@
   function layout() {
     var narrow = window.innerWidth < 760;
     state.narrow = narrow;
-    /* dar ekranda 1440px'lik masaüstü render'ı okunmaz olur: her zaman mobil */
-    state.mode = narrow ? "mobile" : state.pick;
+    /* Dar ekranda da kullanıcının seçtiği görünüm geçerli (eskiden mobile
+       zorlanıyordu, bu yüzden üstteki düğme telefonda ölü kalıyordu). */
+    state.mode = state.pick;
 
     var mode = state.mode;
-    state.logical = LOGICAL[mode];
+    /* Telefonda masaüstü seçiliyse daraltılmış mantıksal genişlik kullan. */
+    var narrowDesk = narrow && mode === "desktop";
+    state.logical = narrowDesk ? NARROW_DESKTOP.logical : LOGICAL[mode];
 
     var chromeH = narrow ? 30 : 36;
     var capH    = narrow ? 32 : 40;
@@ -163,12 +174,13 @@
     var sw = stage.clientWidth;
     var sh = stage.clientHeight;
 
-    var aspect = ASPECT[mode];
+    var aspect = narrowDesk ? NARROW_DESKTOP.aspect : ASPECT[mode];
     var cardH  = Math.max(240, sh - padY * 2);
     var screenH = cardH - chromeH - capH;
     var cardW = Math.round(screenH * aspect);
 
-    var maxRatio = narrow ? 0.86 : (mode === "mobile" ? 0.40 : 0.64);
+    /* Masaüstü render'ı telefonda zaten küçük; her pikseli kullan. */
+    var maxRatio = narrowDesk ? 0.97 : (narrow ? 0.86 : (mode === "mobile" ? 0.40 : 0.64));
     var maxW = Math.round(sw * maxRatio);
     if (cardW > maxW) {
       cardW = maxW;
